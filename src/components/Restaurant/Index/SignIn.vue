@@ -1,10 +1,10 @@
 <template>
 <form>
-  <el-input v-model="name" placeholder="name"> </el-input>>
-  <el-input v-model="password" placeholder="password" :type="type"> </el-input>>
+  <el-input v-model="name" placeholder="name"/>
+  <el-input v-model="password" placeholder="password" :type="type"/>
   <el-radio v-on:click="swithcType" type="radio">hide/show</el-radio>
-  <router-link to="/HomePage"> <el-button type="primary">Sign In</el-button> </router-link>
-  <router-link to="/signup">Go to sign up</router-link>
+  <el-button type="primary" v-on:click="signin">Sign In</el-button>
+  <router-link to="signup">Go to sign up</router-link>
   <router-view></router-view>
 </form>
 </template>
@@ -31,6 +31,9 @@ export default {
       } else {
         this.type = 'password'
       }
+    },
+    signin: function() {
+      this.$emit('signin')
     }
   }
 }

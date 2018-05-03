@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<title>DataStatistics</title>
+		<title>New Dish</title>
 		<p>--------------</p>
-		<p>数据统计页面</p>
+		<p>新建菜品</p>
 		<p>--------------</p>
 	</div>
 </template>
