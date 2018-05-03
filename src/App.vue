@@ -19,8 +19,9 @@ export default {
 
 
 <style>
-.main-page {
-
+html,body {
+  height: 100%;
+  width: 100%;
 }
 
 #exit-button {
@@ -43,5 +44,7 @@ export default {
 #app {
   font-family: Helvetica, sans-serif;
   text-align: center;
+  height: 100%;
+  width: 100%;
 }
 </style>

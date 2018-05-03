@@ -3,7 +3,7 @@
     <el-container>
 
       <el-col :span="3">
-        <h5>Zhidan-System</h5>
+        <h5>知单</h5>
         <el-aside width="200px" height="550px">
           <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"  background-color="#303133">
 

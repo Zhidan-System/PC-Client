@@ -1,10 +1,9 @@
 <template>
-  <el-container id="index">
-    <el-header>{{name}}</el-header>
-    <el-main>
+  <div id="index_container">
+    <div id="index">
       <router-view v-on:signin="signin"></router-view>
-    </el-main>
-  </el-container>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -12,7 +11,7 @@ export default {
   name: 'index',
   data () {
     return {
-      name: 'Zhidan System'
+      name: '知单'
     }
   },
   methods: {
@@ -27,15 +26,51 @@ export default {
 </script>
 
 <style>
+#index_container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: auto;
+  background-image: url('../../assets/index_bg.jpg');
+  background-color: black;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center; 
+  background-size: 100%;
+}
+.el-button {
+  font-size: 12pt;
+  margin: 10px;
+  width: 99%;
+}
+
+.el-input {
+  margin: 3px;
+  padding: 5px;
+  text-align: bottom;
+}
+
+
+.el-header {
+  padding: 10px;
+  text-align: center;
+  font-size: 25pt;
+  font-weight: 2em;
+}
+
 #index {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
-}
-#index {
-  width: 400px
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 1px;
 }
 </style>

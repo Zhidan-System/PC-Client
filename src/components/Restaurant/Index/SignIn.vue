@@ -1,37 +1,33 @@
 <template>
-<form>
-  <el-input v-model="name" placeholder="name"/>
-  <el-input v-model="password" placeholder="password" :type="type"/>
-  <el-radio v-on:click="swithcType" type="radio">hide/show</el-radio>
-  <el-button type="primary" v-on:click="signin">Sign In</el-button>
-  <router-link to="signup">Go to sign up</router-link>
-  <router-view></router-view>
-</form>
+  <el-container>
+    <el-header>知单</el-header>
+    <el-main>
+      <el-input v-model="number" placeholder="手机号" type="text"/>
+      <el-input v-model="password" placeholder="密码" :type="type"/>
+      <el-button type="primary" v-on:click="signin">登录</el-button>
+      <div>
+        <router-link to="signup">没有账号？立即注册</router-link>
+      </div>
+   </el-main>
+  </el-container>
 </template>
 
 <script>
 export default {
-  name: 'sign-in',
-  props: ['initialName', 'initialPassword'],
+  name: 'signin',
+  props: ['initial_number', 'initial_password'],
   // data: () => ({
   //   name: this.initialName,
   //   password: this.initialPassword
   // })
   data () {
     return {
-      name: this.initialName,
-      password: this.initialPassword,
+      number: this.initial_pumber,
+      password: this.initial_password,
       type: 'password'
     }
   },
   methods: {
-    swithcType: function () {
-      if (this.type === 'password') {
-        this.type = 'text'
-      } else {
-        this.type = 'password'
-      }
-    },
     signin: function() {
       this.$emit('signin')
     }
@@ -39,8 +35,4 @@ export default {
 }
 </script>
 <style scoped>
-.el-header {
-    text-align: center
-}
-
 </style>
