@@ -1,12 +1,8 @@
 <template>
   <div id="homepage">
     <el-container>
-
-      <el-col :span="3">
-        <h5>知单</h5>
         <el-aside width="200px" height="550px">
-          <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"  background-color="#303133">
-
+          <el-menu class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"  background-color="#303133" :collapse=false>
             <el-submenu index="1">
               <template slot="title">
                 <span class="menu-title">菜单管理</span>
@@ -42,7 +38,6 @@
 
           </el-menu>
         </el-aside>
-      </el-col>
       
 
       <el-main>
@@ -97,5 +92,11 @@
 #homepage {
   font-family: Helvetica, sans-serif;
   text-align: center;
+}
+
+.el-main {
+  padding: 0px;
+  padding-left: 5px;
+  background-color:#EDEDED;
 }
 </style>
