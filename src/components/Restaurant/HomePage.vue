@@ -71,9 +71,21 @@
 </script>
 
 
-<style>
-.main-page {
+<style scoped>
 
+.main-page {
+  margin: 0;
+  padding: 0;
+}
+
+
+#homepage, .el-container, .el-aside, .el-main, .el-menu, .main-page, .panel {
+  height: 100%;
+}
+
+.panel-body {
+  min-height: 95%;
+  padding: 15px 10px;
 }
 
 #exit-button {
@@ -96,7 +108,7 @@
 
 .el-main {
   padding: 0px;
-  padding-left: 5px;
-  background-color:#EDEDED;
+/*  padding-left: 5px;
+*/  background-color:#EDEDED;
 }
 </style>
