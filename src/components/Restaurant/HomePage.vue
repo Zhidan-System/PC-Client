@@ -34,7 +34,7 @@
             </el-submenu>
 
 
-            <a><el-button icon="el-icon-back" type="text" id="exit-button">退出</el-button></a>
+            <el-button icon="el-icon-back" type="text" id="exit-button" v-on:click="signout">退出</el-button>
 
           </el-menu>
         </el-aside>
@@ -56,6 +56,7 @@
 </template>
 
 <script>
+  import Auth from '../../services/auth'
   export default {
     methods: {
       handleOpen(key, keyPath) {
@@ -65,6 +66,17 @@
       handleClose(key, keyPath) {
         console.log(key, keyPath);
         // Do something here
+      },
+      signout() {
+        // 退出登录
+        var that = this
+        Auth.signout(function(res) {
+          that.$message('退出成功')
+          that.$router.push({path: '/restaurant/signin'})
+        }, function(err) {
+          that.$message.error('服务器错误')
+          that.$router.push({path: '/restaurant/signin'})
+        })
       }
     }
   }

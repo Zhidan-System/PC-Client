@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import Auth from '../../services/auth'
 export default {
   name: 'index',
   data () {
@@ -20,7 +21,13 @@ export default {
     }
   },
   beforeMount: function() {
-    this.$router.replace({path: '/account/signin'})
+    // 测试是否已登录
+    var that = this
+    Auth.isSignined(function(res) {
+      that.$router.push({path: '/home'})
+    }, function(err) {
+      that.$router.push({path: '/restaurant/signin'})
+    })
   }
 }
 </script>
@@ -47,8 +54,7 @@ export default {
 }
 
 .el-input {
-  margin: 3px;
-  padding: 5px;
+  margin: 8px;
   text-align: bottom;
 }
 

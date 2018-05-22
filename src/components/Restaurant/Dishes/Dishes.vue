@@ -5,7 +5,7 @@
 			<p>品类选择</p>
 
 		    <el-select v-model="TypeSelected" slot="prepend" placeholder="请选择">
-		      <el-option v-for="(category, index) in CategoriesArray" :label="category.name" :value="index"></el-option>
+		      <el-option v-for="(category, index) in CategoriesArray" :label="category.name" :key="index"></el-option>
 		    </el-select>
 
 		</div>
@@ -15,8 +15,8 @@
 				<el-header>
 			  		<el-button icon="el-icon-circle-plus-outline">新建</el-button>
 			  		<el-button icon="el-icon-edit-outline">修改</el-button>
-			  		<el-button icon="el-icon-arrow-up"　@click="move('upward')">上移</el-button>
-			  		<el-button icon="el-icon-arrow-down"　@click="move('downward')">下移</el-button>
+			  		<el-button icon="el-icon-arrow-up" @click="move('upward')">上移</el-button>
+			  		<el-button icon="el-icon-arrow-down" @click="move('downward')">下移</el-button>
 			  		<el-button icon="el-icon-upload2" @click="setTop()">置顶</el-button>
 			  		<el-button icon="el-icon-document">复制</el-button>
 			  		<el-button icon="el-icon-sold-out">售罄</el-button>

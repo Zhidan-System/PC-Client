@@ -12,19 +12,20 @@ import Employees from '../components/Restaurant/Profile/Employees'
 import Profile from '../components/Restaurant/Profile/Profile'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import Auth from '../services/auth'
 // import HelloWorld from '../components/HelloWorld'
 
 Vue.use(Router)
 Vue.use(ElementUI)
 
-export default new Router({
+var router = new Router({
   routes: [
       {
         path: '/',
-        redirect: '/account'
+        redirect: '/restaurant'
       },
       {
-        path: '/account',
+        path: '/restaurant',
         component: Index,
         children: [
             {
@@ -40,6 +41,9 @@ export default new Router({
       {
         path: '/home',
         component: HomePage,
+        meta: {
+            requiresAuth: true
+        },
         children: [
             {
                 path: 'types',
@@ -69,3 +73,26 @@ export default new Router({
       }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+    //一个路由匹配到的所有路由记录会暴露为 $route 对象
+    //（还有在导航守卫中的路由对象）的 $route.matched 数组。
+    //因此，我们需要遍历 $route.matched 来检查路由记录中的 meta 字段。
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+      // this route requires auth, check if logged in
+      // if not, redirect to login page.
+        Auth.isSignined(function (res) {
+            // 已登录
+            next()
+        }, function (err) {
+            // 未登录
+            next({
+                path: '/restaurant/signin',
+                query: { redirect: to.fullPath }
+            })
+        })
+    } else {
+      next() // 确保一定要调用 next()
+    }
+  })
+export default router

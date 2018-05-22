@@ -1,7 +1,7 @@
 <template>
 	<div id="Orders">
 
-		<ul v-for = "order in OrdersArray">
+		<ul v-for = "(order, index) in OrdersArray" :key="index">
 			<div class="Order">
 				<el-row class = "OrderNum">
 		  			<el-col :span="24">

@@ -13,7 +13,7 @@
 		</el-row>
 
 		<div id="TypesList">
-			<el-collapse v-for="category in CategoriesArray">
+			<el-collapse v-for="(category, index) in CategoriesArray" :key="index">
 				<el-collapse-item>
 					<template slot="title">
 				    	{{ category.name }}　<i>共 {{ category.quantity }} 项</i>
