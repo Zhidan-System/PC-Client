@@ -2,7 +2,7 @@
    <el-container>
     <el-header>知单</el-header>
     <el-main>
-      <el-input id="num_input" v-model="number" placeholder="管理者手机号" type="text"/>
+      <el-input id="num_input" v-model="manager_number" placeholder="管理者手机号" type="text"/>
       <el-alert v-if="number_visiable" :title="number_alert" type="error" :closable="false" show-icon :visiable="false" />
 
       <el-input v-model="password" placeholder="密码" type="password"/>
@@ -25,7 +25,7 @@
 export default {
   data () {
     return {
-      number: '',
+      manager_number: '',
       password : '',
       password_again : '',
       restaurant_name : '',
@@ -53,7 +53,7 @@ export default {
       
       var that = this
       this.$axios.post('/api/v1/restaurant', {
-        number: this.number,
+        manager_number: this.manager_number,
         password: this.password,
         restaurant_name: this.restaurant_name
       }).then(function (res) {
@@ -74,7 +74,7 @@ export default {
       if (this.checkName()) this.valid = false
     },
     checkNumber: function () {
-      return this.number_visiable = !this.number_reg.test(this.number)
+      return this.number_visiable = !this.number_reg.test(this.manager_number)
     },
     checkPassword: function () {
       this.checkPassAgain()
@@ -89,7 +89,7 @@ export default {
     }
   },
   watch: {
-    number: function () {this.checkNumber()},
+    manager_number: function () {this.checkNumber()},
     password: function () {this.checkPassword()},
     password_again: function () {this.checkPassAgain()},
     restaurant_name: function () {this.checkName()}

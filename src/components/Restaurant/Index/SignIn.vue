@@ -2,7 +2,7 @@
   <el-container>
     <el-header>知单</el-header>
     <el-main>
-      <el-input v-model="number" placeholder="手机号" type="text"/>
+      <el-input v-model="manager_number" placeholder="手机号" type="text"/>
       <el-input v-model="password" placeholder="密码" type="password"/>
       <el-button type="primary" v-on:click="signin">登录</el-button>
       <div>
@@ -19,7 +19,7 @@ export default {
   name: 'signin',
   data () {
     return {
-      number: '',
+      manager_number: '',
       password: ''
     }
   },
@@ -27,7 +27,7 @@ export default {
     signin: function() {
       var that = this
       // 账户密码登录认证
-      Auth.signin(this.number, this.password, function (res) {
+      Auth.signin(this.manager_number, this.password, function (res) {
         console.log(res)
         that.$message('登录成功')
         that.$emit('signin')

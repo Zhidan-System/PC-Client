@@ -1,9 +1,9 @@
 var axios = require('axios')
 var Auth = {
-    signin: function(number, password, callback, errCallback) {
+    signin: function(manager_number, password, callback, errCallback) {
         // 输入账户密码登录
         axios.post('/api/v1/session', {
-            number: number,
+            manager_number: manager_number,
             password: password
         }).then(callback).catch(errCallback)
     },
