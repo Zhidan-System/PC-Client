@@ -6,6 +6,7 @@ import SignUp from '../components/Restaurant/Index/SignUp'
 import HomePage from '../components/Restaurant/HomePage'
 import Types from '../components/Restaurant/Dishes/Types'
 import Dishes from '../components/Restaurant/Dishes/Dishes'
+import NewDish from '../components/Restaurant/Dishes/NewDish'
 import Orders from '../components/Restaurant/Orders/Orders'
 import Statistics from '../components/Restaurant/Orders/Statistics'
 import Employees from '../components/Restaurant/Profile/Employees'
@@ -68,6 +69,10 @@ var router = new Router({
             {
                 path: 'profile',
                 component: Profile
+            },
+            {
+                path: 'newDish',
+                component: NewDish
             }
         ]
       }

@@ -4,8 +4,8 @@
 		<div id="Head">
 			<p>品类选择</p>
 
-		    <el-select v-model="TypeSelected" slot="prepend" placeholder="请选择">
-		      <el-option v-for="(category, index) in CategoriesArray" :label="category.name" :key="index"></el-option>
+		    <el-select v-model="TypeSelected" slot="prepend" placeholder="请选择" @change="loadDishes">
+		      <el-option v-for="(category, index) in CategoriesArray" :label="category.name" :key="category.category_id" :value="category.category_id"></el-option>
 		    </el-select>
 
 		</div>
@@ -13,7 +13,7 @@
 		<div id="Bottom">
 			<el-container>
 				<el-header>
-			  		<el-button icon="el-icon-circle-plus-outline">新建</el-button>
+					<router-link to="newDish"><el-button icon="el-icon-circle-plus-outline">新建</el-button></router-link>		  		
 			  		<el-button icon="el-icon-edit-outline">修改</el-button>
 			  		<el-button icon="el-icon-arrow-up" @click="move('upward')">上移</el-button>
 			  		<el-button icon="el-icon-arrow-down" @click="move('downward')">下移</el-button>
@@ -50,7 +50,7 @@
 					    	<!-- <template slot-scope="scope">{{ scope.row.favorable_rate }}</template> -->
 					    </el-table-column>
 
-					    <el-table-column label="备注标签">
+					    <el-table-column label="详细描述">
 					    	<template slot-scope="scope">{{ scope.row.description }}</template>
 					    </el-table-column>
 			 		</el-table>
@@ -62,64 +62,57 @@
 </template>
 
 <script type="text/javascript">
+	var axios = require('axios');
+
 	export default {
 		data: function() {
 			return {
-				TypeSelected: undefined,  // 该类型在CategoriesArray的索引
+				TypeSelected: '',  // 该类型在CategoriesArray的索引
 
 				multipleSelection: [],  // 选中的行
 
-				CategoriesArray: [
-					{
-						name: "小吃 snack",
-						quantity: 10
-					},
-					{
-						name: "饮料 Drink",
-						quantity: 19
-					},
-					{
-						name: "火锅 HotPot",
-						quantity: 35
-					}
-				],
+				CategoriesArray: [],
 
 				DishesArray: [
-					{
-						image: "https://himg.china.cn/2/3_289_59988_750_750.jpg",
-						dish_name: "炸鸡中翅",
-						price: 15,
-						flavor: "",
-						favorable_rate: "94%",
-						description: "一份五个"
-					},
-					{
-						image: "http://i3.sinaimg.cn/edu/2015/0513/U3649P42DT20150513095955.png",
-						dish_name: "炸薯条",
-						price: 12,
-						flavor: "",
-						favorable_rate: "97%",
-						description: "一份五个"
-					},
-					{
-						image: "https://ali.xinshipu.cn/20140407/original/1396838402494.jpg@300w_225h_90q_1e_1c.jpg",
-						dish_name: "青瓜",
-						price: 10,
-						flavor: "",
-						favorable_rate: "80%",
-						description: "一份五个"
-					},
-					{
-						image: "https://img1.doubanio.com/lpic/s10413937.jpg",
-						dish_name: "拔丝土豆",
-						price: 25,
-						flavor: "",
-						favorable_rate: "75%",
-						description: "一份五个"
-					}
+					// {
+					// 	image: "https://himg.china.cn/2/3_289_59988_750_750.jpg",
+					// 	dish_name: "炸鸡中翅",
+					// 	price: 15,
+					// 	flavor: "",
+					// 	favorable_rate: "94%",
+					// 	description: "一份五个"
+					// },
+					// {
+					// 	image: "http://i3.sinaimg.cn/edu/2015/0513/U3649P42DT20150513095955.png",
+					// 	dish_name: "炸薯条",
+					// 	price: 12,
+					// 	flavor: "",
+					// 	favorable_rate: "97%",
+					// 	description: "一份五个"
+					// },
+					// {
+					// 	image: "https://ali.xinshipu.cn/20140407/original/1396838402494.jpg@300w_225h_90q_1e_1c.jpg",
+					// 	dish_name: "青瓜",
+					// 	price: 10,
+					// 	flavor: "",
+					// 	favorable_rate: "80%",
+					// 	description: "一份五个"
+					// },
+					// {
+					// 	image: "https://img1.doubanio.com/lpic/s10413937.jpg",
+					// 	dish_name: "拔丝土豆",
+					// 	price: 25,
+					// 	flavor: "",
+					// 	favorable_rate: "75%",
+					// 	description: "一份五个"
+					// }
 				]
 
 			}
+		},
+
+		mounted () {
+			axios.get('/api/v1/restaurant').then(response => (this.CategoriesArray = response.data.data.categories));
 		},
 
 		methods: {
@@ -161,6 +154,34 @@
 					}											
 				}
 
+			},
+
+			loadDishes() {
+
+				var that = this;
+				axios.get('/api/v1/menu')
+					.then((response) => {
+
+			        	var menu = response.data.data;
+			        	for (var i = 0; i < menu.length; i++) {
+
+			        		if (menu[i].category_id == that.TypeSelected) {
+			        			that.DishesArray = menu[i].dishes;
+			        			break;
+			        		}
+			        	}
+			        	
+			        	console.log('here')
+			        	console.log(that.DishesArray)
+		          	})
+	          	.catch((error) => {
+	          		// that.$message({
+		           //  	type: 'error',
+		           //  	message: error.response.data.errmsg
+		          	// });
+		        	
+			    	console.log(error.response);
+			  	});
 			}
 		}
 	}
@@ -221,4 +242,8 @@
   		width: 130px;
   		height: 130px;
   	}
+
+  	/*.el-button {
+  		margin: 0;
+  	}*/
 </style>

@@ -91,7 +91,7 @@
 }
 
 
-#homepage, .el-container, .el-aside, .el-main, .el-menu, .main-page, .panel {
+#homepage, .el-container, .el-aside, .el-main, .el-menu, .main-page, .panel, .panel-body {
   height: 100%;
 }
 
