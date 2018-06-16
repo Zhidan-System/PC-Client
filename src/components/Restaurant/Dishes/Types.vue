@@ -59,28 +59,43 @@
 		          	inputErrorMessage: '品类名称格式不正确'
 		        })
 		        .then(({ value }) => {
+		        	// check whether 'value' is in CategoriesArray already
+		        	var isValueValid = true;
+		        	for (var item of that.CategoriesArray) {
+		        		if (item.category_name == value) {
+		        			that.$message({
+				            	type: 'error',
+				            	message: '该品类已创建'
+				          	});
+				          	isValueValid = false;
+				          	break;
+		        		}
+		        	}
 
-		          	axios.post('/api/v1/menu/category', {
-		          		category_name: value
-		          	})
-		          	.then((response) => {
-		          		that.$message({
-			            	type: 'success',
-			            	message: response.data.msg
-			          	});
+		        	if (isValueValid) {
 
-			        	console.log(response);
-			        	
-			        	that.loadCategories();
-		          	})
-		          	.catch((error) => {
-		          		that.$message({
-			            	type: 'error',
-			            	message: error.response.data.errmsg
-			          	});
-			        	
-				    	console.log(error.response);
-				  	});
+			          	axios.post('/api/v1/menu/category', {
+			          		category_name: value
+			          	})
+			          	.then((response) => {
+			          		that.$message({
+				            	type: 'success',
+				            	message: response.data.msg
+				          	});
+
+				        	console.log(response);
+				        	
+				        	that.loadCategories();
+			          	})
+			          	.catch((error) => {
+			          		that.$message({
+				            	type: 'error',
+				            	message: error.response.data.errmsg
+				          	});
+				        	
+					    	console.log(error.response);
+					  	});
+		        	}
 
 		        })
 		        .catch(() => {});

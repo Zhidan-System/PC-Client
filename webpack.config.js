@@ -59,9 +59,9 @@ module.exports = (options = {}) => ({
     port: 8010,
     proxy: {
       '/api/v1': {
-        // target: 'http://zhidan.site:8080',
-        target: 'http://127.0.0.1:3000', // local server
-        pathRewrite: {'^/api/v1': ''},  // local server
+        target: 'http://zhidan.site:8080',
+        // target: 'http://127.0.0.1:3000', // local server
+        // pathRewrite: {'^/api/v1': ''},  // local server
         changeOrigin: true
       }
     },

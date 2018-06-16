@@ -39,9 +39,9 @@
 
 			<el-col :span="8">
 				
-				<el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false"
+				<el-upload class="avatar-uploader" :auto-upload="false" action="/api/v1/menu/dish" name="avatar" :data="new_dish" :show-file-list="true" ref="upload" :on-change="onImageChange"
 						  :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-					<!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
+					<!-- <img v-if="image_local_url" :src="image_local_url" class="avatar"> -->
 				  	<div id="hint">			  		
 					  	<i class="el-icon-upload"></i>
 					  	<div class="el-upload__text"><em>点击上传</em>菜品图片</div>
@@ -82,6 +82,8 @@
 					category_id: ""
 				},
 
+				image_local_url: "",
+
 				rules: {
 		         	dish_name: [
 		            	{ required: true, message: '菜品名称不能为空', trigger: 'blur' },
@@ -120,30 +122,31 @@
 
 						var that = this;
 
-						axios.post('/api/v1/menu/dish', {
-			          		dish_name: this.new_dish.dish_name,
-			          		price: this.new_dish.price,
-			          		flavor: this.new_dish.flavor,
-			          		description: this.new_dish.description,
-			          		category_id: this.new_dish.category_id
-			          	})
-			          	.then((response) => {
-			          		that.$message({
-				            	type: 'success',
-				            	message: response.data.msg
-				          	});
+						that.$refs.upload.submit();
+						// axios.post('/api/v1/menu/dish', {
+			   //        		dish_name: this.new_dish.dish_name,
+			   //        		price: this.new_dish.price,
+			   //        		flavor: this.new_dish.flavor,
+			   //        		description: this.new_dish.description,
+			   //        		category_id: this.new_dish.category_id
+			   //        	})
+			   //        	.then((response) => {
+			   //        		that.$message({
+				  //           	type: 'success',
+				  //           	message: response.data.msg
+				  //         	});
 
-				        	console.log(response);
+				  //       	console.log(response);
 				        	
-			          	})
-			          	.catch((error) => {
-			          		that.$message({
-				            	type: 'error',
-				            	message: error.response.data.errmsg
-				          	});
+			   //        	})
+			   //        	.catch((error) => {
+			   //        		that.$message({
+				  //           	type: 'error',
+				  //           	message: error.response.data.errmsg
+				  //         	});
 				        	
-					    	console.log(error.response);
-					  	});
+					 //    	console.log(error.response);
+					 //  	});
           			} else {
 	            		// console.log('error submit!!');
 	            		return false;
@@ -154,6 +157,12 @@
 
 			resetForm(formName) {
         		this.$refs[formName].resetFields();
+      		},
+
+      		onImageChange(file) {
+      			console.log('file:');
+      			console.log(file);
+      			this.image_local_url = file.url; 
       		},
 
 			handleAvatarSuccess() {

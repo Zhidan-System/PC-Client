@@ -5,7 +5,8 @@
 			<p>品类选择</p>
 
 		    <el-select v-model="TypeSelected" slot="prepend" placeholder="请选择" @change="loadDishes">
-		      <el-option v-for="(category, index) in CategoriesArray" :label="category.category_name" :key="category.category_id" :value="category.category_id"></el-option>
+		    	<el-option label="全部" value="all" key="-1"></el-option>
+		    	<el-option v-for="(category, index) in CategoriesArray" :label="category.category_name" :key="category.category_id" :value="category.category_id"></el-option>
 		    </el-select>
 
 		</div>
@@ -67,7 +68,7 @@
 	export default {
 		data: function() {
 			return {
-				TypeSelected: '',  // 该类型在CategoriesArray的索引
+				TypeSelected: 'all',  // 该类型在CategoriesArray的索引
 
 				multipleSelection: [],  // 选中的行
 
@@ -112,7 +113,14 @@
 		},
 
 		mounted () {
-			axios.get('/api/v1/menu').then(response => {this.CategoriesArray = response.data.data});
+			axios.get('/api/v1/menu')
+					.then((response) => {
+						this.CategoriesArray = response.data.data;
+
+						var menu = response.data.data;
+						for (var type of menu)
+			    			this.DishesArray = this.DishesArray.concat(type.dishes);
+			    	});     		
 		},
 
 		methods: {
@@ -163,25 +171,30 @@
 					.then((response) => {
 
 			        	var menu = response.data.data;
-			        	for (var i = 0; i < menu.length; i++) {
-
-			        		if (menu[i].category_id == that.TypeSelected) {
-			        			that.DishesArray = menu[i].dishes;
-			        			break;
-			        		}
+			        	if (that.TypeSelected == 'all') {
+			        		that.DishesArray = [];
+			        		for (var type of menu)
+			        			that.DishesArray = that.DishesArray.concat(type.dishes);
+			        		
+			        	} else {
+				        	for (var i = 0; i < menu.length; i++) {
+				        		if (menu[i].category_id == that.TypeSelected) {
+				        			that.DishesArray = menu[i].dishes;
+				        			break;
+				        		}
+				        	}
+			        		
 			        	}
-			        	
-			        	console.log('here')
-			        	console.log(that.DishesArray)
+
 		          	})
-	          	.catch((error) => {
-	          		// that.$message({
-		           //  	type: 'error',
-		           //  	message: error.response.data.errmsg
-		          	// });
-		        	
-			    	console.log(error.response);
-			  	});
+		          	.catch((error) => {
+		          		// that.$message({
+			           //  	type: 'error',
+			           //  	message: error.response.data.errmsg
+			          	// });
+			        	
+				    	console.log(error.response);
+				  	});
 			}
 		}
 	}
