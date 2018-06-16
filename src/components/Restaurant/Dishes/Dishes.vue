@@ -5,7 +5,7 @@
 			<p>品类选择</p>
 
 		    <el-select v-model="TypeSelected" slot="prepend" placeholder="请选择" @change="loadDishes">
-		      <el-option v-for="(category, index) in CategoriesArray" :label="category.name" :key="category.category_id" :value="category.category_id"></el-option>
+		      <el-option v-for="(category, index) in CategoriesArray" :label="category.category_name" :key="category.category_id" :value="category.category_id"></el-option>
 		    </el-select>
 
 		</div>
@@ -112,7 +112,7 @@
 		},
 
 		mounted () {
-			axios.get('/api/v1/restaurant').then(response => (this.CategoriesArray = response.data.data.categories));
+			axios.get('/api/v1/menu').then(response => {this.CategoriesArray = response.data.data});
 		},
 
 		methods: {

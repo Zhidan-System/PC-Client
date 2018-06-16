@@ -22,7 +22,7 @@
 
 					<el-form-item label="所属品类" prop="category_id">
 						<el-select v-model="new_dish.category_id" placeholder="请选择品类">
-							<el-option v-for="(category, index) in CategoriesArray" :label="category.name" :key="category.category_id" :value="category.category_id"></el-option>
+							<el-option v-for="(category, index) in CategoriesArray" :label="category.category_name" :key="category.category_id" :value="category.category_id"></el-option>
 						</el-select>
 					</el-form-item>
 
@@ -110,7 +110,7 @@
 		},
 
 		mounted () {
-			axios.get('/api/v1/restaurant').then(response => (this.CategoriesArray = response.data.data.categories));
+			axios.get('/api/v1/menu').then(response => {this.CategoriesArray = response.data.data});
 		},
 
 		methods: {

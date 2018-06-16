@@ -16,8 +16,8 @@
 			<el-collapse v-for="(category, index) in CategoriesArray" :key="category.category_id" :index="index">
 				<el-collapse-item>
 					<template slot="title">
-				    	{{ category.name }}　
-				    	<!-- <i>共 {{ category.quantity }} 项</i> -->
+				    	{{ category.category_name }}　
+				    	<i>共 {{ category.dishes.length }} 项</i>
 				    </template>
 				    <div></div>
 				</el-collapse-item>
@@ -38,12 +38,12 @@
 		},
 
 		mounted () {
-			axios.get('/api/v1/restaurant').then(response => (this.CategoriesArray = response.data.data.categories));
+			axios.get('/api/v1/menu').then(response => {console.log(response.data.data); this.CategoriesArray = response.data.data});
 		},
 
 		methods: {
 			loadCategories() {
-				axios.get('/api/v1/restaurant').then(response => (this.CategoriesArray = response.data.data.categories));
+				axios.get('/api/v1/menu').then(response => {this.CategoriesArray = response.data.data});
 			},
 
 			updateType() {
