@@ -13,7 +13,31 @@
 		</el-row>
 
 		<div id="TypesList">
-			<el-collapse v-for="(category, index) in CategoriesArray" :key="category.category_id" :index="index">
+
+ 			<el-card :body-style="{ margin: '0', padding: '0' }" v-for="(category, index) in CategoriesArray" :key="category.category_id" :index="index" shadow="hover">
+ 				<div style="width:170px; height:170px;">					
+		      		<img :src="category.dishes.length > 0 ? category.dishes[0].image_url : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKwmAWWCWg4IMz3M8QrzamqQvoBrF5YPV80eExjEfkL1YKH8W9'" class="image" width="100%" height="100%">
+ 				</div>
+		      	
+
+		      	<div style="padding: 3px;">
+		        	<span>{{ category.category_name }}</span>
+			        <div class="bottom clearfix">
+			          	<i>共 {{ category.dishes.length }} 项</i>
+			          	<!-- <el-button type="text" class="button">操作按钮</el-button> -->
+			          	<span>
+				      		<span>
+				      			<i class="el-icon-zoom-in"></i>
+				      		</span>
+				      		<span>
+				      			<i class="el-icon-delete"></i>
+				      		</span>
+				      	</span>
+			        </div>
+		      	</div>
+		    </el-card>
+
+			<!-- <el-collapse v-for="(category, index) in CategoriesArray" :key="category.category_id" :index="index">
 				<el-collapse-item>
 					<template slot="title">
 				    	{{ category.category_name }}　
@@ -21,7 +45,7 @@
 				    </template>
 				    <div></div>
 				</el-collapse-item>
-			</el-collapse>
+			</el-collapse> -->
 		</div>
 	</div>
 </template>
@@ -145,10 +169,22 @@
 
 	#TypesList {
 		margin: 15px 10px;
-		border: 1px solid grey;
-		box-shadow: 0px 0px 5px #888888;
+		/*border: 1px solid, #BFBFBF;
+		box-shadow: 0px 0px 2px #888888;*/
 		background-color: white;
+
+		display: flex;
+		flex-flow: row wrap;
+		align-content: space-around;
 	}
 
+	.bottom {
+		font-size: 13px;
+    	color: #999;
+	}
+
+	div.el-card.is-hover-shadow {
+		margin: 6px;
+	}
 
 </style>

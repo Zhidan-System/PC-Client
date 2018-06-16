@@ -31,7 +31,7 @@
 
 					    <el-table-column label="图片" width="150">
 					    	<template slot-scope="scope">
-					    		<img :src="scope.row.image">
+					    		<img :src="scope.row.image_url">
 					    	</template>
 					    </el-table-column>
 
@@ -74,40 +74,7 @@
 
 				CategoriesArray: [],
 
-				DishesArray: [
-					// {
-					// 	image: "https://himg.china.cn/2/3_289_59988_750_750.jpg",
-					// 	dish_name: "炸鸡中翅",
-					// 	price: 15,
-					// 	flavor: "",
-					// 	favorable_rate: "94%",
-					// 	description: "一份五个"
-					// },
-					// {
-					// 	image: "http://i3.sinaimg.cn/edu/2015/0513/U3649P42DT20150513095955.png",
-					// 	dish_name: "炸薯条",
-					// 	price: 12,
-					// 	flavor: "",
-					// 	favorable_rate: "97%",
-					// 	description: "一份五个"
-					// },
-					// {
-					// 	image: "https://ali.xinshipu.cn/20140407/original/1396838402494.jpg@300w_225h_90q_1e_1c.jpg",
-					// 	dish_name: "青瓜",
-					// 	price: 10,
-					// 	flavor: "",
-					// 	favorable_rate: "80%",
-					// 	description: "一份五个"
-					// },
-					// {
-					// 	image: "https://img1.doubanio.com/lpic/s10413937.jpg",
-					// 	dish_name: "拔丝土豆",
-					// 	price: 25,
-					// 	flavor: "",
-					// 	favorable_rate: "75%",
-					// 	description: "一份五个"
-					// }
-				]
+				DishesArray: []
 
 			}
 		},
@@ -115,12 +82,16 @@
 		mounted () {
 			axios.get('/api/v1/menu')
 					.then((response) => {
+						console.log('in res')
+						console.log(response.data.data)		
+
+
 						this.CategoriesArray = response.data.data;
 
 						var menu = response.data.data;
 						for (var type of menu)
 			    			this.DishesArray = this.DishesArray.concat(type.dishes);
-			    	});     		
+			    	});
 		},
 
 		methods: {

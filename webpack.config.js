@@ -63,6 +63,13 @@ module.exports = (options = {}) => ({
         // target: 'http://127.0.0.1:3000', // local server
         // pathRewrite: {'^/api/v1': ''},  // local server
         changeOrigin: true
+      },
+
+      '/img': {
+        target: 'http://zhidan.site:8080',
+        // target: 'http://127.0.0.1:3000', // local server
+        // pathRewrite: {'^/img': 'uploads'},  // local server
+        changeOrigin: true
       }
     },
     historyApiFallback: {
