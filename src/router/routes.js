@@ -9,7 +9,7 @@ import Dishes from '../components/Restaurant/Dishes/Dishes'
 import NewDish from '../components/Restaurant/Dishes/NewDish'
 import Orders from '../components/Restaurant/Orders/Orders'
 import Statistics from '../components/Restaurant/Orders/Statistics'
-import Employees from '../components/Restaurant/Profile/Employees'
+import Desks from '../components/Restaurant/Profile/Desks'
 import Profile from '../components/Restaurant/Profile/Profile'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -41,6 +41,7 @@ var router = new Router({
       },
       {
         path: '/home',
+        redirect: '/home/orders',
         component: HomePage,
         meta: {
             requiresAuth: true
@@ -63,8 +64,8 @@ var router = new Router({
                 component: Statistics
             },
             {
-                path: 'employees',
-                component: Employees
+                path: 'desks',
+                component: Desks
             },
             {
                 path: 'profile',

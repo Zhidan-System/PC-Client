@@ -28,8 +28,8 @@
                 <span class="menu-title">餐厅管理</span>
               </template>
               <el-menu-item-group>
-                <router-link to="/home/employees"><el-menu-item index="3-1">店员管理</el-menu-item></router-link>
-                <router-link to="/home/profile"><el-menu-item index="3-2">餐厅信息</el-menu-item></router-link>
+                <router-link to="/home/profile"><el-menu-item index="3-1">餐厅信息</el-menu-item></router-link>
+                <router-link to="/home/desks"><el-menu-item index="3-2">餐桌管理</el-menu-item></router-link>
               </el-menu-item-group>
             </el-submenu>
 

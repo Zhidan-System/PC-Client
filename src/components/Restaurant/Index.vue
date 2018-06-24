@@ -53,6 +53,10 @@ export default {
   width: 99%;
 }
 
+.el-input-number .el-input {
+	margin: 0;
+}
+
 .el-input {
   margin: 8px;
   text-align: bottom;
