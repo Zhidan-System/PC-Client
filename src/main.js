@@ -5,6 +5,9 @@ import App from './App.vue'
 import VueRouter from 'vue-router'
 import Axios from 'axios'
 import router from './router/routes'
+import echarts from 'echarts'
+
+Vue.prototype.$echarts = echarts 
 Vue.use(ElementUI)
 Vue.use(VueRouter)
 Vue.prototype.$axios = Axios
