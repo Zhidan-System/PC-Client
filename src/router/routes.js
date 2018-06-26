@@ -7,6 +7,7 @@ import HomePage from '../components/Restaurant/HomePage'
 import Types from '../components/Restaurant/Dishes/Types'
 import Dishes from '../components/Restaurant/Dishes/Dishes'
 import NewDish from '../components/Restaurant/Dishes/NewDish'
+import UpdateDish from '../components/Restaurant/Dishes/UpdateDish'
 import Orders from '../components/Restaurant/Orders/Orders'
 import Statistics from '../components/Restaurant/Orders/Statistics'
 import Desks from '../components/Restaurant/Profile/Desks'
@@ -74,6 +75,10 @@ var router = new Router({
             {
                 path: 'newDish',
                 component: NewDish
+            },
+            {
+                path: 'updateDish',
+                component: UpdateDish
             }
         ]
       }
