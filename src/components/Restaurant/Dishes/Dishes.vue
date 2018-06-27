@@ -33,7 +33,7 @@
 					    </el-table-column>
 
 					    <el-table-column label="名称" width="150">
-					    	<template slot-scope="scope">{{ scope.row.dish_name }}</template>
+					    	<template slot-scope="scope">{{ scope.row.dish_name }} <el-tag size="mini" v-if="scope.row.sale_out">售罄</el-tag></template>
 					    </el-table-column>
 
 					    <el-table-column label="基础价格" width="110" prop="price" sortable>
@@ -58,7 +58,9 @@
 									<el-button size="mini">编辑</el-button>	
 								</router-link>		  		
 						        
-						        <el-button size="mini" type="warning">售罄</el-button>
+						        <el-button size="mini" type="warning" v-if="!scope.row.sale_out" @click="handleSoldOut(scope.$index, scope.row, 1)">售罄</el-button>
+						        <el-button size="mini" type="primary" v-if="scope.row.sale_out" @click="handleSoldOut(scope.$index, scope.row, 0)">补货</el-button>
+
 						        <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" style="margin: 0">删除</el-button>
 						    </template>
 					    </el-table-column>
@@ -82,18 +84,13 @@
 
 				CategoriesArray: [],
 
-				DishesArray: []
-
+				DishesArray: [],
 			}
 		},
 
 		mounted () {
 			axios.get('/api/v1/menu')
 					.then((response) => {
-						console.log('in res')
-						console.log(response.data.data)		
-
-
 						this.CategoriesArray = response.data.data;
 
 						var menu = response.data.data;
@@ -109,7 +106,7 @@
       		},
 
 			setTop: function() {
-				console.log(this.multipleSelection);
+				// console.log(this.multipleSelection);
 				if (this.multipleSelection) {
 					var top = this.DishesArray.filter(x => this.multipleSelection.indexOf(x) != -1);
 					var bottom = this.DishesArray.filter(x => this.multipleSelection.indexOf(x) == -1);
@@ -168,16 +165,13 @@
 
 		          	})
 		          	.catch((error) => {
-		          		// that.$message({
-			           //  	type: 'error',
-			           //  	message: error.response.data.errmsg
-			          	// });
 			        	
 				    	console.log(error.response);
 				  	});
 			},
 
 		    handleDelete(index, row) {
+
 		        var that = this;
 
 		        this.$confirm('是否删除这道菜?', '提示', {
@@ -213,6 +207,34 @@
             			message: '已取消删除'
           			});          
         		});
+		    },
+
+		    handleSoldOut(index, row, sale_out) {
+		    	var that = this;
+		    	console.log('dish_id_list: ', [row.dish_id]);
+
+		    	axios.put('/api/v1/menu/dish', {
+			          	dish_id_list: [row.dish_id],
+			          	sale_out: sale_out
+			        })
+			        .then((response) => {
+		          		that.$message({
+			            	type: 'success',
+			            	message: response.data.msg
+			          	});
+
+			        	console.log(response);
+			        	
+			        	that.loadDishes();
+			        })	
+		          	.catch((error) => {
+		          		that.$message({
+			            	type: 'error',
+			            	message: error.response.data.errmsg
+			          	});
+			        	
+				    	console.log(error.response);
+				  	});
 		    }
 
 

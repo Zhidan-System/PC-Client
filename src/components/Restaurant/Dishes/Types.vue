@@ -210,7 +210,7 @@
 		border: 1px solid, #BFBFBF;
 		box-shadow: 0px 0px 5px #888888;
 		background-color: white;
-		height: 100%;
+		/*height: 100%;*/
 	}
 
 	p {
