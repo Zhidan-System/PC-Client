@@ -6,7 +6,7 @@
 				<el-row class = "OrderNum">
 		  			<el-col :span="24">
 		  				<div class="grid-content bg-purple-dark Font_LeftAlign">
-		  					<i class="el-icon-tickets Font_Bold "> 单号： {{order.OrderId}} </i>
+		  					<i class="el-icon-tickets Font_Bold "> 单号： {{order.order_id}} </i>
 		  				</div>
 		  			</el-col>
 				</el-row>
@@ -14,25 +14,25 @@
 				<el-row id="SecondRow">
 		  			<el-col :span="6" class = "Font_LeftAlign">
 		  				<div class="grid-content bg-purple-dark">
-		  					创建人： {{order.OrderCreater}}
+		  					订单状态: {{order.state}}
 		  				</div>
 		  			</el-col>
 
 		  			<el-col :span="12" class = "Font_LeftAlign">
 		  				<div class="grid-content bg-purple-dark">
-		  					数量： {{order.OrderNum}}
+		  					订单金额： {{order.total_price}}
 		  				</div>
 		  			</el-col>
 
 		  			<el-col :span="3" class = "Font_LeftAlign">
 		  				<div class="grid-content bg-purple-dark">
-		  					状态
+		  					
 		  				</div>
 		  			</el-col>
 
 		  			<el-col :span="3" class = "Font_LeftAlign">
 		  				<div class="grid-content bg-purple-dark">
-		  					订单金额
+		  					
 		  				</div>
 		  			</el-col>
 				</el-row>
@@ -40,25 +40,25 @@
 				<el-row id="ThirdRow">
 		  			<el-col :span="6" class = "Font_LeftAlign">
 		  				<div class="grid-content bg-purple-dark">
-		  					创建时间： {{order.OrderCreateTime}}
+		  					创建时间： {{order.date}}
 		  				</div>
 		  			</el-col>
 
 		  			<el-col :span="12" class = "Font_LeftAlign">
 		  				<div class="grid-content bg-purple-dark">
-		  					优惠金额： {{order.OrderDiscount}}
+		  					是否需要餐具： {{order.tableware}}
 		  				</div>
 		  			</el-col>
 
 		  			<el-col :span="3" class = "Font_LeftAlign">
 		  				<div class="grid-content bg-purple-dark Font_Bold">
-		  					{{order.OrderStatus}}
+		  					
 		  				</div>
 		  			</el-col>
 
 		  			<el-col :span="3" class = "Font_LeftAlign">
 		  				<div class="grid-content bg-purple-dark Font_Bold">
-		  					{{order.OrderTotalAmount}}
+		  					
 		  				</div>
 		  			</el-col>
 				</el-row>
@@ -71,8 +71,10 @@
 </template>
 
 <script>
+var axios = require('axios');
 
 export default {
+
 	data: function() {
 		return {
 
@@ -98,10 +100,25 @@ export default {
 					OrderTotalAmount: '￥568.08',
 				}
 
+			],
 
-			]
+			TestArray:[]
 		}
-	}
+
+
+	},
+
+	mounted () {
+        axios.get('/api/v1/order', {
+        		params: {
+        			date: '18-06-27'
+        		}
+        	})	
+        	.then(response => {
+        	console.log(response.data.data);
+        	this.OrdersArray = response.data.data;
+        });
+    }, 
 }
 
 </script>

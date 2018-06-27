@@ -1,11 +1,9 @@
 <template>
 	<div>
-		
-    	<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
     	<div id="NumOfPayments">
     		<p>6560</p>
     	</div>
-		<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+
     	<div id="TotalSales">
     		<div id="InsideTS">
     			<p>总销售额</p>
@@ -16,115 +14,295 @@
     			<p style="width : 150px">日均销售额: ￥{{DailySales}}</p>
     		</div>
     	</div>
-    	<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-    	<div id="myChart"></div>
+
+        <div id="BottomDiv">
+            <div id="Selector">
+                <div id="ChartSelector">
+                    <el-row>
+                        <el-button @click = "ChartTypeSelect(0)">销售额</el-button>
+                        <el-button @click = "ChartTypeSelect(1)">订单数</el-button>
+                    </el-row>
+                </div>
+                <div id="RangeSelector">
+                    <el-row>
+                        <el-button>今日</el-button>
+                        <el-button @click = "DrawWeeklyChart('RevenueChart')">本周</el-button>
+                        <el-button @click = "DrawMonthlyChart('RevenueChart')">本月</el-button>
+                        <el-button @click = "DrawYearlyChart('RevenueChart')">本年</el-button>
+                    </el-row>
+                </div>
+            </div>        
+            <div id="RevenueChart"></div>
+        </div>
+    	
 
 	</div>
 </template>
 
 <script type="text/javascript">
 export default {
+    name: 'hello',
 
+    data () {
+        return {
+            SalesTotal: '126,560',
+            Weekly: "12",
+            Daily: "11",
+            DailySales: "12423",
+            ChartSelector: "CS",
+            RangeSelector: "RS",
+            ChartTypeSelector: 0,
+        }
+    },
 
-  name: 'hello',
-  data () {
-    return {
-      msg: 'Welcome to Your Vue.js App',
-      SalesTotal: '126,560',
-      Weekly: "12",
-      Daily: "11",
-      DailySales: "12423",
-    }
-  },
-  mounted(){
-    this.drawLine();
-    this.DrawNOP();
-    //this.DrawTS();
-  },
-  methods: {
-    drawLine() {
-        // 基于准备好的dom，初始化echarts实例
-        let myChart = this.$echarts.init(document.getElementById('myChart'))
-        // 绘制图表
-        myChart.setOption({
-            title: { text: '销售额趋势' },
-            tooltip: {},
-            xAxis: {
-                data: ["1月","2月","3月","4月","5月","6月", "7月", "8月", "9月", "10月", "11月", "12月"]
-            },
-            yAxis: {},
-            series: [{
-                name: '销售额趋势',
-                type: 'bar',
-                data: [0, 200, 400, 600, 800, 1000, 1200],
-                itemStyle:{
-                    normal:{
-                        color:'#4169E1'
+    mounted() {
+        this.DrawMonthlyChart("RevenueChart", 0);
+        this.DrawNOP();
+        //this.DrawTS();
+    },
+
+    methods: {
+        ChartTypeSelect(para) {
+            this.ChartTypeSelector = para;
+        },
+
+        // ChartType —— 0代表绘制营业额表格，1代表绘制支付数表格
+        DrawYearlyChart(ChartName) {
+            var date = new Date();
+            var DateToPost = date.toLocaleString();
+            
+            console.log(date.toLocaleString());
+
+            var DaysInThisMonth = 30;
+
+            var Yearly_Array = [];
+            if (this.ChartTypeSelector == 0) {
+                for (var i = 0; i < 12; i++) {
+                    var RevenueThisMonth = 0;
+                    for (var j = 0; j < DaysInThisMonth; j++) {
+                        RevenueThisMonth += i;
                     }
+                    Yearly_Array.push(RevenueThisMonth);
                 }
-            }]
-        });
-    },
-
-    DrawNOP() {
-        // 基于准备好的dom，初始化echarts实例
-        let NumOfPayments = this.$echarts.init(document.getElementById('NumOfPayments'))
-        // 绘制图表
-        NumOfPayments.setOption({
-            title: { text: '支付笔数' },
-            tooltip: {},
-            xAxis: {
-                data: ["","","","","",""]
-            },
-            yAxis: {},
-            series: [{
-                name: '销量',
-                type: 'bar',
-                data: [5, 20, 36, 10, 10, 20],
-                itemStyle:{
-                    normal:{
-                        color:'#4169E1'
+            } else if (this.ChartTypeSelector == 1) {
+                for (var i = 0; i < 12; i++) {
+                    var RevenueThisMonth = 0;
+                    for (var j = 0; j < DaysInThisMonth; j++) {
+                        RevenueThisMonth += i;
                     }
-                }                
-            }]
-        });
-    },
+                    Yearly_Array.push(100);
+                }
+            }
+            // 基于准备好的dom，初始化echarts实例
+            let Chart = this.$echarts.init(document.getElementById(ChartName))
+            // 绘制图表
+            Chart.setOption({
+                title: { text: '销售额趋势' },
+                tooltip: {},
 
-    DrawTS() {
-        // 基于准备好的dom，初始化echarts实例
-        let TotalSales = this.$echarts.init(document.getElementById('TotalSales'))
-        // 绘制图表
-        TotalSales.setOption({
-            title: { text: '总销售额' },
-            tooltip: {},
-            xAxis: {
-                data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-            },
-            yAxis: {},
-            series: [{
-                name: '销量',
-                type: 'bar',
-                data: [5, 20, 36, 10, 10, 20],
-                center: ['50%', '50%'],
-                itemStyle:{
-                    normal:{
-                        color:'#4169E1'
+                xAxis: {
+                    data: ["1月","2月","3月","4月","5月","6月", "7月", "8月", "9月", "10月", "11月", "12月"]
+                },
+                yAxis: {},
+                series: [{
+                    name: '销售额趋势',
+                    type: 'bar',
+                    data: Yearly_Array,
+                    itemStyle:{
+                        normal:{
+                            color:'#4169E1'
+                        }
                     }
-                }                
-            }]
-        });
-    }    
+                }]
+            });
+        },
+
+        DrawMonthlyChart(ChartName) {
+            var DaysInThisMonth = 30;
+
+            var MonthArray = [];
+            for (var i = 0; i < DaysInThisMonth; i++) {
+                MonthArray[i] = (i+1).toString() + "日";
+            }
+
+            var Monthly_Array = [];
+            if (this.ChartTypeSelector == 0) {
+                for (var i = 0; i < DaysInThisMonth; i++)
+                    Monthly_Array.push(i);
+            } else if (this.ChartTypeSelector == 1) {
+                for (var i = 0; i < DaysInThisMonth; i++)
+                    Monthly_Array.push(DaysInThisMonth - i);
+            }
+            // 基于准备好的dom，初始化echarts实例
+            let Chart = this.$echarts.init(document.getElementById(ChartName))
+            // 绘制图表
+            Chart.setOption({
+                title: { text: '销售额趋势' },
+                tooltip: {},
+
+                xAxis: {
+                    data: MonthArray
+                },
+                yAxis: {},
+                series: [{
+                    name: '销售额趋势',
+                    type: 'bar',
+                    data: Monthly_Array,
+                    itemStyle:{
+                        normal:{
+                            color:'#4169E1'
+                        }
+                    }
+                }]
+            });
+        },
+
+        DrawWeeklyChart(ChartName) {
+            var Weekly_Array = [];
+
+            if (this.ChartTypeSelector == 0) {
+                for (var i = 0; i < 7; i++)
+                    Weekly_Array.push(i);
+            } else if (this.ChartTypeSelector == 1) {
+                for (var i = 0; i < 7; i++)
+                    Weekly_Array.push(DaysInThisMonth - i);
+            }
+
+            // 基于准备好的dom，初始化echarts实例
+            let Chart = this.$echarts.init(document.getElementById(ChartName))
+            // 绘制图表
+            Chart.setOption({
+                title: { text: '销售额趋势' },
+                tooltip: {},
+
+                xAxis: {
+                    data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+                },
+                yAxis: {},
+                series: [{
+                    name: '销售额趋势',
+                    type: 'bar',
+                    data: Weekly_Array,
+                    itemStyle:{
+                        normal:{
+                            color:'#4169E1'
+                        }
+                    }
+                }]
+            });
+        },
+
+        DrawWeeklyChart(ChartName) {
+            var Weekly_Array = [];
+            Weekly_Array.push(0);
+            Weekly_Array.push(1111110);
+            console.log(Weekly_Array);
+
+            // 基于准备好的dom，初始化echarts实例
+            let Chart = this.$echarts.init(document.getElementById(ChartName))
+            // 绘制图表
+            Chart.setOption({
+                title: { text: '销售额趋势' },
+                tooltip: {},
+
+                xAxis: {
+                    data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+                },
+                yAxis: {},
+                series: [{
+                    name: '销售额趋势',
+                    type: 'bar',
+                    data: Weekly_Array,
+                    itemStyle:{
+                        normal:{
+                            color:'#4169E1'
+                        }
+                    }
+                }]
+            });
+        },
+
+        DrawNOP() {
+            // 基于准备好的dom，初始化echarts实例
+            let NumOfPayments = this.$echarts.init(document.getElementById('NumOfPayments'))
+            // 绘制图表
+            NumOfPayments.setOption({
+                title: { text: '支付笔数' },
+                tooltip: {},
+                xAxis: {
+                    data: ["","","","","",""]
+                },
+                yAxis: {},
+                series: [{
+                    name: '销量',
+                    type: 'bar',
+                    data: [5, 20, 36, 10, 10, 20],
+                    itemStyle:{
+                        normal:{
+                            color:'#4169E1'
+                        }
+                    }                
+                }]
+            });
+        },
+
+        DrawTS() {
+            // 基于准备好的dom，初始化echarts实例
+            let TotalSales = this.$echarts.init(document.getElementById('TotalSales'))
+            // 绘制图表
+            TotalSales.setOption({
+                title: { text: '总销售额' },
+                tooltip: {},
+                xAxis: {
+                    data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+                },
+                yAxis: {},
+                series: [{
+                    name: '销量',
+                    type: 'bar',
+                    data: [5, 20, 36, 10, 10, 20],
+                    center: ['50%', '50%'],
+                    itemStyle:{
+                        normal:{
+                            color:'#4169E1'
+                        }
+                    }                
+                }]
+            });
+        }    
   }
 }
 </script>
 
 <style type="text/css">
-#myChart {
-	width: 1000px;
-	height: 500px;
+#BottomDiv {
+    width: 1000px;
+    height: 600px;
+    margin-top: 50px;
+    position: relative;
+    left: 20%;
+    background-color: white;    
+}
+
+#Selector {
+    padding-top: 2%;
+}
+
+#ChartSelector {
+    float: left;
+    padding-left: 10%;
+}
+
+#RangeSelector {
+    padding-left: 35%;
+}
+
+#RevenueChart {
+	width: 800px;
+	height: 400px;
 	margin-top: 50px;
 	position: relative;
-	left: 20%;
+	left: 10%;
 	background-color: white;
 }
 
