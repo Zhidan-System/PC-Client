@@ -10,7 +10,6 @@
     			<p id="bold">￥{{SalesTotal}}</p>
     			<p> 周同比 {{Weekly}}% <i class="el-icon-caret-top"></i></p>
     			<p> 日环比 {{Daily}}%<i class="el-icon-caret-bottom"></i></p>
-    			<el-row class = "GappingLine" id="GappingLine2"></el-row>
     			<p style="width : 150px">日均销售额: ￥{{DailySales}}</p>
     		</div>
     	</div>
@@ -25,7 +24,7 @@
                 </div>
                 <div id="RangeSelector">
                     <el-row>
-                        <el-button>今日</el-button>
+                        <el-button @click = "DrawDailyChart('RevenueChart')">今日</el-button>
                         <el-button @click = "DrawWeeklyChart('RevenueChart')">本周</el-button>
                         <el-button @click = "DrawMonthlyChart('RevenueChart')">本月</el-button>
                         <el-button @click = "DrawYearlyChart('RevenueChart')">本年</el-button>
@@ -40,6 +39,8 @@
 </template>
 
 <script type="text/javascript">
+var axios = require('axios');
+
 export default {
     name: 'hello',
 
@@ -56,27 +57,61 @@ export default {
     },
 
     mounted() {
-        this.DrawMonthlyChart("RevenueChart", 0);
+        this.DrawMonthlyChart("RevenueChart");
         this.DrawNOP();
+        this.GetTotalSales();
         //this.DrawTS();
     },
 
     methods: {
+        GetTotalSales() {
+            axios.get('/api/v1/statistics', {})  
+                .then(response => {
+                console.log(response.data.data[0]["sum(total_price)"]);
+                this.SalesTotal = response.data.data[0]["sum(total_price)"];
+            });            
+        },
+
         ChartTypeSelect(para) {
             this.ChartTypeSelector = para;
         },
 
         // ChartType —— 0代表绘制营业额表格，1代表绘制支付数表格
         DrawYearlyChart(ChartName) {
-            var date = new Date();
-            var DateToPost = date.toLocaleString();
-            
-            console.log(date.toLocaleString());
-
-            var DaysInThisMonth = 30;
+            var CurrentDate = new Date(); // 当前日期 YYYY-MM-DD
+            var MonthOfThisYear = CurrentDate.getMonth(); // 获取本机时间是这年第几月 0~11
+            var MaxIterator = 12 - MonthOfThisYear + 1; // 增量
+            var MinIterator = -(MonthOfThisYear - 1);
 
             var Yearly_Array = [];
-            if (this.ChartTypeSelector == 0) {
+
+            for (var it = MinIterator; it < MaxIterator; it++) {
+                var DateToGet = new Date();
+                DateToGet.setMonth(CurrentDate.getMonth()+it);
+                console.log(DateToGet.toLocaleDateString());
+                var RevenueThisMonth;
+                if (this.ChartTypeSelector == 0) {
+
+                    axios.get('/api/v1/statistics/month', {
+                            params: {
+                                date: DateToGet
+                            }
+                        })  
+                        .then(response => {
+                        console.log(response.data.data[0]["sum(total_price)"]);
+                        RevenueThisMonth = response.data.data[0]["sum(total_price)"];
+                    });
+                    RevenueThisMonth = (RevenueThisMonth == null) ? 100 : RevenueThisMonth; 
+                    Yearly_Array.push(RevenueThisMonth);
+
+                } else if (this.ChartTypeSelector == 1) {
+
+                }
+
+               
+            }
+
+            /*if (this.ChartTypeSelector == 0) {
                 for (var i = 0; i < 12; i++) {
                     var RevenueThisMonth = 0;
                     for (var j = 0; j < DaysInThisMonth; j++) {
@@ -92,7 +127,7 @@ export default {
                     }
                     Yearly_Array.push(100);
                 }
-            }
+            }*/
             // 基于准备好的dom，初始化echarts实例
             let Chart = this.$echarts.init(document.getElementById(ChartName))
             // 绘制图表
@@ -119,6 +154,13 @@ export default {
 
         DrawMonthlyChart(ChartName) {
             var DaysInThisMonth = 30;
+            var CurrentDate = new Date(); // 当前日期 YYYY-MM-DD
+            var DateOfNextMonth = new Date();
+            DateOfNextMonth.setMonth(CurrentDate.getMonth()+1);
+            DateOfNextMonth.setDate(0);
+
+            console.log(DateOfNextMonth.toLocaleDateString());
+            DaysInThisMonth = DateOfNextMonth.getDate();
 
             var MonthArray = [];
             for (var i = 0; i < DaysInThisMonth; i++) {
@@ -126,12 +168,31 @@ export default {
             }
 
             var Monthly_Array = [];
-            if (this.ChartTypeSelector == 0) {
-                for (var i = 0; i < DaysInThisMonth; i++)
-                    Monthly_Array.push(i);
-            } else if (this.ChartTypeSelector == 1) {
-                for (var i = 0; i < DaysInThisMonth; i++)
-                    Monthly_Array.push(DaysInThisMonth - i);
+
+            for (var it = 1; it <= DaysInThisMonth; it++) {
+                var DateToGet = new Date();
+                DateToGet.setDate(it);
+                console.log(DateToGet.toLocaleDateString());
+                var RevenueThisDate;
+                if (this.ChartTypeSelector == 0) {
+
+                    axios.get('/api/v1/statistics/day', {
+                            params: {
+                                date: DateToGet
+                            }
+                        })  
+                        .then(response => {
+                        console.log(response.data.data[0]["sum(total_price)"]);
+                        RevenueThisDate = response.data.data[0]["sum(total_price)"];
+                    });
+                    RevenueThisDate = (RevenueThisDate == null) ? 100 : RevenueThisDate; 
+                    Monthly_Array.push(RevenueThisDate);
+
+                } else if (this.ChartTypeSelector == 1) {
+
+                }
+
+               
             }
             // 基于准备好的dom，初始化echarts实例
             let Chart = this.$echarts.init(document.getElementById(ChartName))
@@ -158,14 +219,39 @@ export default {
         },
 
         DrawWeeklyChart(ChartName) {
+            console.log("DrawWeeklyChart");
+
+            var CurrentDate = new Date(); // 当前日期 YYYY-MM-DD
+            var DayOfThisWeek = CurrentDate.getDay(); // 获取本机时间是这周第几天 0~6
+            var MaxIterator = 7 - DayOfThisWeek + 1; // 增量
+            var MinIterator = -(DayOfThisWeek - 1);
+
             var Weekly_Array = [];
 
-            if (this.ChartTypeSelector == 0) {
-                for (var i = 0; i < 7; i++)
-                    Weekly_Array.push(i);
-            } else if (this.ChartTypeSelector == 1) {
-                for (var i = 0; i < 7; i++)
-                    Weekly_Array.push(DaysInThisMonth - i);
+            for (var it = MinIterator; it < MaxIterator; it++) {
+                var DateToGet = new Date();
+                DateToGet.setDate(CurrentDate.getDate()+it);
+                console.log(DateToGet.toLocaleDateString());
+                var RevenueThisDate;
+                if (this.ChartTypeSelector == 0) {
+
+                    axios.get('/api/v1/statistics/day', {
+                            params: {
+                                date: DateToGet
+                            }
+                        })  
+                        .then(response => {
+                        console.log(response.data.data[0]["sum(total_price)"]);
+                        RevenueThisDate = response.data.data[0]["sum(total_price)"];
+                    });
+                    RevenueThisDate = (RevenueThisDate == null) ? 100 : RevenueThisDate; 
+                    Weekly_Array.push(RevenueThisDate);
+
+                } else if (this.ChartTypeSelector == 1) {
+
+                }
+
+               
             }
 
             // 基于准备好的dom，初始化echarts实例
@@ -192,11 +278,44 @@ export default {
             });
         },
 
-        DrawWeeklyChart(ChartName) {
-            var Weekly_Array = [];
-            Weekly_Array.push(0);
-            Weekly_Array.push(1111110);
-            console.log(Weekly_Array);
+        DrawDailyChart(ChartName) {
+            var CurrentDate = new Date(); // 当前日期 YYYY-MM-DD
+            var DayOfThisWeek = CurrentDate.getDay(); // 获取本机时间是这周第几天 0~6
+            var MaxIterator = 7 - DayOfThisWeek + 1; // 增量
+            var MinIterator = -(DayOfThisWeek - 1);
+
+            var Daily_Array = [];
+
+            var DayArray = [];
+            for (var i = 0; i < 24; i++) {
+                DayArray.push(i.toString());
+            }
+
+            for (var it = 0; it < 24; it++) {
+                var DateToGet = new Date();
+                DateToGet.setHours(it);
+                console.log(DateToGet.toLocaleDateString());
+                var RevenueThisDate;
+                if (this.ChartTypeSelector == 0) {
+
+                    axios.get('/api/v1/statistics/hour', {
+                            params: {
+                                date: DateToGet
+                            }
+                        })  
+                        .then(response => {
+                        console.log(response.data.data[0]["sum(total_price)"]);
+                        RevenueThisDate = response.data.data[0]["sum(total_price)"];
+                    });
+                    RevenueThisDate = (RevenueThisDate == null) ? 100 : RevenueThisDate; 
+                    Daily_Array.push(RevenueThisDate);
+
+                } else if (this.ChartTypeSelector == 1) {
+
+                }
+
+               
+            }
 
             // 基于准备好的dom，初始化echarts实例
             let Chart = this.$echarts.init(document.getElementById(ChartName))
@@ -206,13 +325,13 @@ export default {
                 tooltip: {},
 
                 xAxis: {
-                    data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+                    data: DayArray
                 },
                 yAxis: {},
                 series: [{
                     name: '销售额趋势',
                     type: 'bar',
-                    data: Weekly_Array,
+                    data: Daily_Array,
                     itemStyle:{
                         normal:{
                             color:'#4169E1'
