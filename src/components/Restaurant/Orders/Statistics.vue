@@ -170,7 +170,7 @@ export default {
         },
 
         DrawMonthlyChart(ChartName) {
-            var DaysInThisMonth = 30;
+            var DaysInThisMonth;
             var CurrentDate = new Date(); // 当前日期 YYYY-MM-DD
             var DateOfNextMonth = new Date();
             DateOfNextMonth.setMonth(CurrentDate.getMonth()+1);

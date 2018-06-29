@@ -126,9 +126,10 @@ export default {
 
     methods: {
     	GetOrders() {
+    		var CurrentDate = new Date(); // 当前日期 YYYY-MM-DD
     		axios.get('/api/v1/order', {
         		params: {
-        			date: '18-06-27'
+        			date: CurrentDate
         		}
         	})	
         	.then(response => {
