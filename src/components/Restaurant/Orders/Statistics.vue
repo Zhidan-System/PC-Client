@@ -7,7 +7,12 @@
     	<div id="TotalSales">
     		<div id="InsideTS">
     			<p>总销售额</p>
-    			<p id="bold">￥{{SalesTotal}}</p>
+                <div v-if = "SalesTotal == '统计中...'">
+    			    <p>统计中...</p>
+                </div>
+                <div v-else>
+                     <p id="bold">￥{{SalesTotal}}</p>
+                </div>
     			<p> 周同比 {{Weekly}}% <i class="el-icon-caret-top"></i></p>
     			<p> 日环比 {{Daily}}%<i class="el-icon-caret-bottom"></i></p>
     			<p style="width : 150px">日均销售额: ￥{{DailySales}}</p>
@@ -46,13 +51,14 @@ export default {
 
     data () {
         return {
-            SalesTotal: '126,560',
+            SalesTotal: '统计中...',
             Weekly: "12",
             Daily: "11",
-            DailySales: "12423",
+            DailySales: "统计中...",
             ChartSelector: "CS",
             RangeSelector: "RS",
             ChartTypeSelector: 0,
+            defaultVal: 0,
         }
     },
 
@@ -60,6 +66,7 @@ export default {
         this.DrawMonthlyChart("RevenueChart");
         this.DrawNOP();
         this.GetTotalSales();
+        //this.GetDayilySales();
         //this.DrawTS();
     },
 
@@ -67,9 +74,19 @@ export default {
         GetTotalSales() {
             axios.get('/api/v1/statistics', {})  
                 .then(response => {
-                console.log(response.data.data[0]["sum(total_price)"]);
-                this.SalesTotal = response.data.data[0]["sum(total_price)"];
-            });            
+                //console.log(response.data.data[0]["sum(total_price)"]);
+                this.SalesTotal = response.data.data[0]["sum(total_price)"] == null ? 0 : response.data.data[0]["sum(total_price)"];
+                this.DailySales = parseInt(response.data.data[0]["sum(total_price)"] == null ? 0 : response.data.data[0]["sum(total_price)"]) / 365;
+            });
+                      
+        },
+
+        GetDayilySales() {
+            console.log(this.SalesTotal);
+            var tempDailySales = parseInt(this.SalesTotal) / 365;
+            console.log(parseInt(this.SalesTotal));
+            console.log(tempDailySales);
+            this.DailySales = (isNaN(tempDailySales)) ? '错误' : tempDailySales;  
         },
 
         ChartTypeSelect(para) {
@@ -88,7 +105,7 @@ export default {
             for (var it = MinIterator; it < MaxIterator; it++) {
                 var DateToGet = new Date();
                 DateToGet.setMonth(CurrentDate.getMonth()+it);
-                console.log(DateToGet.toLocaleDateString());
+                //console.log(DateToGet.toLocaleDateString());
                 var RevenueThisMonth;
                 if (this.ChartTypeSelector == 0) {
 
@@ -101,7 +118,7 @@ export default {
                         console.log(response.data.data[0]["sum(total_price)"]);
                         RevenueThisMonth = response.data.data[0]["sum(total_price)"];
                     });
-                    RevenueThisMonth = (RevenueThisMonth == null) ? 100 : RevenueThisMonth; 
+                    RevenueThisMonth = (RevenueThisMonth == null) ? this.defaultVal : RevenueThisMonth; 
                     Yearly_Array.push(RevenueThisMonth);
 
                 } else if (this.ChartTypeSelector == 1) {
@@ -159,7 +176,7 @@ export default {
             DateOfNextMonth.setMonth(CurrentDate.getMonth()+1);
             DateOfNextMonth.setDate(0);
 
-            console.log(DateOfNextMonth.toLocaleDateString());
+            //console.log(DateOfNextMonth.toLocaleDateString());
             DaysInThisMonth = DateOfNextMonth.getDate();
 
             var MonthArray = [];
@@ -185,7 +202,7 @@ export default {
                         console.log(response.data.data[0]["sum(total_price)"]);
                         RevenueThisDate = response.data.data[0]["sum(total_price)"];
                     });
-                    RevenueThisDate = (RevenueThisDate == null) ? 100 : RevenueThisDate; 
+                    RevenueThisDate = (RevenueThisDate == null) ? this.defaultVal : RevenueThisDate; 
                     Monthly_Array.push(RevenueThisDate);
 
                 } else if (this.ChartTypeSelector == 1) {
@@ -244,7 +261,7 @@ export default {
                         console.log(response.data.data[0]["sum(total_price)"]);
                         RevenueThisDate = response.data.data[0]["sum(total_price)"];
                     });
-                    RevenueThisDate = (RevenueThisDate == null) ? 100 : RevenueThisDate; 
+                    RevenueThisDate = (RevenueThisDate == null) ? this.defaultVal : RevenueThisDate; 
                     Weekly_Array.push(RevenueThisDate);
 
                 } else if (this.ChartTypeSelector == 1) {
@@ -307,7 +324,7 @@ export default {
                         console.log(response.data);
                         RevenueThisDate = response.data;
                     });
-                    RevenueThisDate = (RevenueThisDate == null) ? 100 : RevenueThisDate; 
+                    RevenueThisDate = (RevenueThisDate == null) ? this.defaultVal : RevenueThisDate; 
                     Daily_Array.push(RevenueThisDate);
 
                 } else if (this.ChartTypeSelector == 1) {

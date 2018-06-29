@@ -1,71 +1,79 @@
 <template>
 	<div id="Orders">
 
-		<ul v-for = "(order, index) in OrdersArray" :key="index">
-			<div class="Order">
-				<el-row class = "OrderNum">
-		  			<el-col :span="24">
-		  				<div class="grid-content bg-purple-dark Font_LeftAlign">
-		  					<i class="el-icon-tickets Font_Bold "> 单号： {{order.order_id}} </i>
-		  				</div>
-		  			</el-col>
-				</el-row>
+		<div v-if = "OrdersArray.length == 0" id="NoOrderPage">
+			<el-row id="hint">目前没有订单...</el-row>
+		</div>
 
-				<el-row id="SecondRow">
-		  			<el-col :span="6" class = "Font_LeftAlign">
-		  				<div class="grid-content bg-purple-dark">
-		  					订单状态: {{order.state}}
-		  				</div>
-		  			</el-col>
+		<div v-else>
+			<ul v-for = "(order, index) in OrdersArray" :key="index">
+				<div class="Order">
+					<el-row class = "OrderNum">
+			  			<el-col :span="24">
+			  				<div class="grid-content bg-purple-dark Font_LeftAlign">
+			  					<i class="el-icon-tickets Font_Bold "> 单号： {{order.order_id}} </i>
+			  				</div>
+			  			</el-col>
+					</el-row>
 
-		  			<el-col :span="12" class = "Font_LeftAlign">
-		  				<div class="grid-content bg-purple-dark">
-		  					订单金额： {{order.total_price}}
-		  				</div>
-		  			</el-col>
+					<el-row id="SecondRow">
+			  			<el-col :span="6" class = "Font_LeftAlign">
+			  				<div class="grid-content bg-purple-dark">
+			  					订单状态: {{order.state}}
+			  				</div>
+			  			</el-col>
 
-		  			<el-col :span="3" class = "Font_LeftAlign">
-		  				<div class="grid-content bg-purple-dark">
-		  					
-		  				</div>
-		  			</el-col>
+			  			<el-col :span="12" class = "Font_LeftAlign">
+			  				<div class="grid-content bg-purple-dark">
+			  					订单金额： {{order.total_price}}
+			  				</div>
+			  			</el-col>
 
-		  			<el-col :span="3" class = "Font_LeftAlign">
-		  				<div class="grid-content bg-purple-dark">
-		  					
-		  				</div>
-		  			</el-col>
-				</el-row>
+			  			<el-col :span="3" class = "Font_LeftAlign">
+			  				<div class="grid-content bg-purple-dark">
+			  					
+			  				</div>
+			  			</el-col>
 
-				<el-row id="ThirdRow">
-		  			<el-col :span="6" class = "Font_LeftAlign">
-		  				<div class="grid-content bg-purple-dark">
-		  					创建时间： {{order.date}}
-		  				</div>
-		  			</el-col>
+			  			<el-col :span="3" class = "Font_LeftAlign">
+			  				<div class="grid-content bg-purple-dark">
+			  					
+			  				</div>
+			  			</el-col>
+					</el-row>
 
-		  			<el-col :span="12" class = "Font_LeftAlign">
-		  				<div class="grid-content bg-purple-dark">
-		  					是否需要餐具： {{order.tableware}}
-		  				</div>
-		  			</el-col>
+					<el-row id="ThirdRow">
+			  			<el-col :span="6" class = "Font_LeftAlign">
+			  				<div class="grid-content bg-purple-dark">
+			  					创建时间： {{order.date}}
+			  				</div>
+			  			</el-col>
 
-		  			<el-col :span="3" class = "Font_LeftAlign">
-		  				<div class="grid-content bg-purple-dark Font_Bold">
-		  					
-		  				</div>
-		  			</el-col>
+			  			<el-col :span="12" class = "Font_LeftAlign">
+			  				<div class="grid-content bg-purple-dark">
+			  					是否需要餐具： {{order.tableware}}
+			  				</div>
+			  			</el-col>
 
-		  			<el-col :span="3" class = "Font_LeftAlign">
-		  				<div class="grid-content bg-purple-dark Font_Bold">
-		  					
-		  				</div>
-		  			</el-col>
-				</el-row>
+			  			<el-col :span="3" class = "Font_LeftAlign">
+			  				<div class="grid-content bg-purple-dark Font_Bold">
+			  					
+			  				</div>
+			  			</el-col>
 
-				<el-row class = "GappingLine"></el-row>
-			</div>
-		</ul>
+			  			<el-col :span="3" class = "Font_LeftAlign">
+			  				<div class="grid-content bg-purple-dark Font_Bold">
+			  					
+			  				</div>
+			  			</el-col>
+					</el-row>
+
+					<el-row class = "GappingLine"></el-row>
+				</div>
+			</ul>
+		</div>
+
+
 
 	</div>
 </template>
@@ -109,7 +117,16 @@ export default {
 	},
 
 	mounted () {
-        axios.get('/api/v1/order', {
+        this.GetOrders();
+
+        setInterval(function() {
+        	this.GetOrders();
+        }.bind(this), 30000);
+    }, 
+
+    methods: {
+    	GetOrders() {
+    		axios.get('/api/v1/order', {
         		params: {
         			date: '18-06-27'
         		}
@@ -117,13 +134,28 @@ export default {
         	.then(response => {
         	console.log(response.data.data);
         	this.OrdersArray = response.data.data;
-        });
-    }, 
+        	});
+    	}
+    }
 }
 
 </script>
 
 <style type="text/css">
+#hint {
+	font-weight: bold;
+	font-size: 40px;
+	text-align: center;
+	left: 230%;
+	top: 30%;
+}
+
+#NoOrderPage {
+	height: 300px;
+	width: 300px;
+
+}
+
 #Orders {
 	margin-top: 15px;
 	margin-left: 6px;
