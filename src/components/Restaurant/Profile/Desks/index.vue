@@ -54,7 +54,7 @@ export default {
 			});
 		},
 		getUrl(deskId) {
-			return `http://zhidan.site:8080/desk/${deskId}/restaurant/${this.restaurantId}`;
+			return `http://zhidan.site:8081/#/desk/${deskId}/restaurant/${this.restaurantId}`;
 		}
 	},
 	components: {
