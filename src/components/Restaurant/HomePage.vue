@@ -91,13 +91,13 @@
 }
 
 
-#homepage, .el-container, .el-aside, .el-main, .el-menu, .main-page, .panel, .panel-body {
+#homepage, .el-container, .el-aside, .el-main, .el-menu, .main-page, .panel {
   height: 100%;
 }
 
 .panel-body {
   min-height: 95%;
-  padding: 15px 10px;
+  padding: 10px;
 }
 
 #exit-button {

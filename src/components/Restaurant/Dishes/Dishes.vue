@@ -15,13 +15,10 @@
 			<el-container>
 				<el-header>
 					<router-link to="newDish"><el-button icon="el-icon-circle-plus-outline">新建</el-button></router-link>		  		
-			  		<el-button icon="el-icon-edit-outline">修改</el-button>
 			  		<el-button icon="el-icon-arrow-up" @click="move('upward')">上移</el-button>
 			  		<el-button icon="el-icon-arrow-down" @click="move('downward')">下移</el-button>
 			  		<el-button icon="el-icon-upload2" @click="setTop()">置顶</el-button>
-			  		<el-button icon="el-icon-document">复制</el-button>
-			  		<el-button icon="el-icon-sold-out">售罄</el-button>
-			  		<el-button icon="el-icon-delete">删除</el-button>
+			  		
 			  	</el-header>
 
 			 	<el-main>
@@ -36,23 +33,36 @@
 					    </el-table-column>
 
 					    <el-table-column label="名称" width="150">
-					    	<template slot-scope="scope">{{ scope.row.dish_name }}</template>
+					    	<template slot-scope="scope">{{ scope.row.dish_name }} <el-tag size="mini" v-if="scope.row.sale_out">售罄</el-tag></template>
 					    </el-table-column>
 
-					    <el-table-column label="基础价格" width="120" prop="price" sortable>
+					    <el-table-column label="基础价格" width="110" prop="price" sortable>
 					    	<!-- <template slot-scope="scope">{{ scope.row.price }}</template> -->
 					    </el-table-column>
 
-					    <el-table-column label="口味" width="150">
+					    <el-table-column label="口味" width="110">
 					    	<template slot-scope="scope">{{ scope.row.flavor }}</template>
 					    </el-table-column>
 
-					    <el-table-column label="好评度" width="150" prop="favorable_rate" sortable>
+					    <el-table-column label="好评度" width="90" prop="favorable_rate" sortable>
 					    	<!-- <template slot-scope="scope">{{ scope.row.favorable_rate }}</template> -->
 					    </el-table-column>
 
 					    <el-table-column label="详细描述">
 					    	<template slot-scope="scope">{{ scope.row.description }}</template>
+					    </el-table-column>
+
+					    <el-table-column label="操作">
+					    	<template slot-scope="scope">
+								<router-link :to="{path: '/home/updateDish', query: {dish_info: scope.row}}">
+									<el-button size="mini">编辑</el-button>	
+								</router-link>		  		
+						        
+						        <el-button size="mini" type="warning" v-if="!scope.row.sale_out" @click="handleSoldOut(scope.$index, scope.row, 1)">售罄</el-button>
+						        <el-button size="mini" type="primary" v-if="scope.row.sale_out" @click="handleSoldOut(scope.$index, scope.row, 0)">补货</el-button>
+
+						        <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" style="margin: 0">删除</el-button>
+						    </template>
 					    </el-table-column>
 			 		</el-table>
 			 	</el-main>
@@ -74,18 +84,13 @@
 
 				CategoriesArray: [],
 
-				DishesArray: []
-
+				DishesArray: [],
 			}
 		},
 
 		mounted () {
 			axios.get('/api/v1/menu')
 					.then((response) => {
-						console.log('in res')
-						console.log(response.data.data)		
-
-
 						this.CategoriesArray = response.data.data;
 
 						var menu = response.data.data;
@@ -97,10 +102,11 @@
 		methods: {
 			handleSelectionChange: function(val) {
         		this.multipleSelection = val;
+        		console.log("selections: ", this.multipleSelection);
       		},
 
 			setTop: function() {
-				console.log(this.multipleSelection);
+				// console.log(this.multipleSelection);
 				if (this.multipleSelection) {
 					var top = this.DishesArray.filter(x => this.multipleSelection.indexOf(x) != -1);
 					var bottom = this.DishesArray.filter(x => this.multipleSelection.indexOf(x) == -1);
@@ -159,14 +165,79 @@
 
 		          	})
 		          	.catch((error) => {
-		          		// that.$message({
-			           //  	type: 'error',
-			           //  	message: error.response.data.errmsg
-			          	// });
 			        	
 				    	console.log(error.response);
 				  	});
-			}
+			},
+
+		    handleDelete(index, row) {
+
+		        var that = this;
+
+		        this.$confirm('是否删除这道菜?', '提示', {
+          			confirmButtonText: '确定',
+          			cancelButtonText: '取消',
+          			type: 'warning'
+        		}).then(() => {
+        			axios.delete('/api/v1/menu/dish', {
+			          	data: {dish_id: row.dish_id}
+			        })
+			        .then((response) => {
+		          		that.$message({
+			            	type: 'success',
+			            	message: response.data.msg
+			          	});
+
+			        	console.log(response);
+			        	
+			        	that.loadDishes();
+			        })	
+		          	.catch((error) => {
+		          		that.$message({
+			            	type: 'error',
+			            	message: error.response.data.errmsg
+			          	});
+			        	
+				    	console.log(error.response);
+				  	});
+
+        		}).catch(() => {
+          			this.$message({
+            			type: 'info',
+            			message: '已取消删除'
+          			});          
+        		});
+		    },
+
+		    handleSoldOut(index, row, sale_out) {
+		    	var that = this;
+		    	console.log('dish_id_list: ', [row.dish_id]);
+
+		    	axios.put('/api/v1/menu/dish', {
+			          	dish_id_list: [row.dish_id],
+			          	sale_out: sale_out
+			        })
+			        .then((response) => {
+		          		that.$message({
+			            	type: 'success',
+			            	message: response.data.msg
+			          	});
+
+			        	console.log(response);
+			        	
+			        	that.loadDishes();
+			        })	
+		          	.catch((error) => {
+		          		that.$message({
+			            	type: 'error',
+			            	message: error.response.data.errmsg
+			          	});
+			        	
+				    	console.log(error.response);
+				  	});
+		    }
+
+
 		}
 	}
 </script>
@@ -179,6 +250,14 @@
 		background-color: white;
 		min-height: 100%;
 		padding: 10px;	
+	}
+
+	.el-button {
+		margin: 1px;
+	}
+
+	#Bottom .el-header .el-button {
+		margin: 10px;
 	}
 
 	p {

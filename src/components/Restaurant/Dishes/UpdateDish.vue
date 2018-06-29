@@ -2,44 +2,44 @@
     <div　id="NewDish">
         <el-container>
             <el-header>
-                <p>创建菜品</p>
+                <p>修改菜品信息</p>
             </el-header>
 
             <el-container class="bottom">
                 <el-main>
-                    <el-form ref="newDishForm" :model="new_dish" label-width="80px" :rules="rules">
+                    <el-form ref="newDishForm" :model="prop_dish_info" label-width="80px" :rules="rules">
 
                         <el-form-item label="菜品名称" prop="dish_name">
-                            <el-input v-model="new_dish.dish_name"></el-input>
+                            <el-input v-model="prop_dish_info.dish_name"></el-input>
                         </el-form-item>
 
                         <el-form-item label="价格" prop="price">
-                            <el-input v-model.number="new_dish.price"></el-input>
+                            <el-input v-model.number="prop_dish_info.price"></el-input>
                         </el-form-item>
 
                         <el-form-item label="口味" prop="flavor">
-                            <el-input v-model="new_dish.flavor"></el-input>
+                            <el-input v-model="prop_dish_info.flavor"></el-input>
                         </el-form-item>
 
                         <el-form-item label="所属品类" prop="category_id">
-                            <el-select v-model="new_dish.category_id" placeholder="请选择品类">
+                            <el-select v-model="prop_dish_info.category_id" placeholder="请选择品类">
                                 <el-option v-for="(category, index) in CategoriesArray" :label="category.category_name" :key="category.category_id" :value="category.category_id"></el-option>
                             </el-select>
                         </el-form-item>
 
                         <el-form-item label="详情介绍" prop="description">
-                            <el-input type="textarea" v-model="new_dish.description"></el-input>
+                            <el-input type="textarea" v-model="prop_dish_info.description"></el-input>
                         </el-form-item>
 
                         <el-form-item>
-                            <el-button type="primary" @click="submitForm('newDishForm')">立即创建</el-button>
+                            <el-button type="primary" @click="submitForm('newDishForm')">立即修改</el-button>
                             <el-button @click="resetForm('newDishForm')">取消</el-button>
                         </el-form-item>
                     </el-form>
 
                 </el-main>
                 <el-aside width="40%">
-                    <el-upload id="uploadImagePart" :auto-upload="false" action="/api/v1/menu/dish" name="avatar" :data="new_dish" :file-list="imageList" :show-file-list="false" ref="upload" :on-change="onImageChange" :on-success="onImageUploadSuccess" :on-error="onImageUploadFailed">
+                    <el-upload id="uploadImagePart" :auto-upload="false" action="/api/v1/menu/dish/detail" name="avatar" :data="prop_dish_info" :file-list="imageList" :show-file-list="false" ref="upload" :on-change="onImageChange" :on-success="onImageUploadSuccess" :on-error="onImageUploadFailed">
                         <img v-if="image_local_url" :src="image_local_url" class="avatar">
                         <div id="hint" v-if="!image_local_url">           
                             <i class="el-icon-upload"></i>
@@ -74,7 +74,9 @@ export default {
         };
 
         return {
-            new_dish: {
+           
+            prop_dish_info: {
+                dish_id: "",
                 dish_name: "",
                 price: "",
                 flavor: "",
@@ -112,8 +114,25 @@ export default {
         }
     },
 
+    created() {
+        console.log("this.$route.query.dish_info: ", this.$route.query.dish_info);
+
+         //获取上个页面传递的菜品信息
+        this.prop_dish_info.dish_name = this.$route.query.dish_info.dish_name;
+        this.prop_dish_info.price = this.$route.query.dish_info.price;
+        this.prop_dish_info.flavor = this.$route.query.dish_info.flavor;
+        this.prop_dish_info.description = this.$route.query.dish_info.description;
+        this.prop_dish_info.category_id = this.$route.query.dish_info.category_id;
+        this.prop_dish_info.dish_id = this.$route.query.dish_info.dish_id;
+        this.image_local_url = this.$route.query.dish_info.image_url;
+
+        console.log("this.imageList: ", this.imageList);
+
+        console.log("prop_dish_info: ", this.prop_dish_info);
+    },
+
     mounted () {
-        axios.get('http://zhidan.site/api/v1/order').then(response => {this.CategoriesArray = response.data.data});
+        axios.get('/api/v1/menu').then(response => {this.CategoriesArray = response.data.data});
     },
 
     methods: {
@@ -123,17 +142,44 @@ export default {
 
                     var that = this;
 
-                    if (!that.image_local_url) {
-                        that.$message({
-                            type: 'error',
-                            message: '请上传菜品图片'
+                    if (that.imageList.length == 0) {
+                        console.log('图片未修改');
+
+                        axios.post('/api/v1/menu/dish/detail', {
+                            dish_id: that.prop_dish_info.dish_id,
+                            dish_name: that.prop_dish_info.dish_name,
+                            price: that.prop_dish_info.price,
+                            flavor: that.prop_dish_info.flavor,
+                            description: that.prop_dish_info.description,
+                            category_id: that.prop_dish_info.category_id,
+                        })
+                        .then((response) => {
+                            that.$message({
+                                type: 'success',
+                                message: response.data.msg
+                            });
+
+                            console.log(response);
+
+                            that.$router.replace({path: '/home/dishes'});
+                          
+                        })
+                        .catch((error) => {
+                            that.$message({
+                                type: 'error',
+                                message: error.response.data.errmsg
+                            });
+                          
+                            console.log(error.response);
                         });
+                        
                     } else {
+
                         that.$refs.upload.submit();
                     }
 
                 } else {
-                    // console.log('error submit!!');
+                    console.log('error submit!!');
                     return false;
                 }
             });
@@ -141,11 +187,14 @@ export default {
         },
 
         resetForm(formName) {
-            this.$refs[formName].resetFields();
+            this.$router.replace({path: '/home/dishes'});
         },
 
         onImageChange(file, fileList) {
-            // console.log(file);
+            console.log('onImageChange file: ', file);
+            console.log('onImageChange fileList: ', fileList);
+
+
             this.image_local_url = file.url;
             this.imageList = fileList.slice(-1);
             

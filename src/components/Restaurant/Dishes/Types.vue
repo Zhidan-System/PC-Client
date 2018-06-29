@@ -5,9 +5,9 @@
 		<el-row id="Menubar">
 		  <el-col :span="24" >
 		  	<div class="grid-content bg-purple-light">
-		  		<el-button type="text" @click="createType"><i class="el-icon-circle-plus-outline">新建</i></el-button>
-				<el-button type="text" @click="updateType"><i class="el-icon-edit-outline">修改</i></el-button>
-				<el-button type="text"><i class="el-icon-delete">删除</i></el-button>					  		
+		  		<el-button type="text" @click="createType"> <i class="el-icon-circle-plus-outline"> 新建</i></el-button>
+				<!-- <el-button type="text"><i class="el-icon-edit-outline">修改</i></el-button>
+				<el-button type="text"><i class="el-icon-delete">删除</i></el-button> -->					  		
 		  	</div>
 		  </el-col>
 		</el-row>
@@ -15,37 +15,23 @@
 		<div id="TypesList">
 
  			<el-card :body-style="{ margin: '0', padding: '0' }" v-for="(category, index) in CategoriesArray" :key="category.category_id" :index="index" shadow="hover">
- 				<div style="width:170px; height:170px;">					
+ 				<div style="width:170px; height:160px;">					
 		      		<img :src="category.dishes.length > 0 ? category.dishes[0].image_url : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKwmAWWCWg4IMz3M8QrzamqQvoBrF5YPV80eExjEfkL1YKH8W9'" class="image" width="100%" height="100%">
  				</div>
 		      	
 
 		      	<div style="padding: 3px;">
 		        	<span>{{ category.category_name }}</span>
-			        <div class="bottom clearfix">
+			        <div class="typeBottom">
 			          	<i>共 {{ category.dishes.length }} 项</i>
-			          	<!-- <el-button type="text" class="button">操作按钮</el-button> -->
-			          	<span>
-				      		<span>
-				      			<i class="el-icon-zoom-in"></i>
-				      		</span>
-				      		<span>
-				      			<i class="el-icon-delete"></i>
-				      		</span>
-				      	</span>
+			          	<el-button type="text" @click="updateType(category.category_id)"><i class="el-icon-edit"></i></el-button>
+			          	<el-button type="text" @click="deleteType(category.category_id)"><i class="el-icon-delete"></i></el-button>
+
 			        </div>
 		      	</div>
+
 		    </el-card>
 
-			<!-- <el-collapse v-for="(category, index) in CategoriesArray" :key="category.category_id" :index="index">
-				<el-collapse-item>
-					<template slot="title">
-				    	{{ category.category_name }}　
-				    	<i>共 {{ category.dishes.length }} 项</i>
-				    </template>
-				    <div></div>
-				</el-collapse-item>
-			</el-collapse> -->
 		</div>
 	</div>
 </template>
@@ -70,8 +56,64 @@
 				axios.get('/api/v1/menu').then(response => {this.CategoriesArray = response.data.data});
 			},
 
-			updateType() {
-				this.loadCategories();
+			checkWhetherCategoryRepeat(value) {
+				var isValueValid = true;
+	        	
+	        	for (var item of this.CategoriesArray) {
+	        		if (item.category_name == value) {
+	        			this.$message({
+			            	type: 'error',
+			            	message: '该品类已创建'
+			          	});
+			          	isValueValid = false;
+			          	break;
+	        		}
+	        	}
+	        	return isValueValid;
+			},
+
+			updateType(category_id) {
+				var that = this;
+		        that.$prompt('请输入新的品类名称', '修改品类', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		        	inputPattern: /.+/,
+		          	inputErrorMessage: '品类名称格式不正确'
+		        })
+		        .then(({ value }) => {
+		        	// check whether 'value' is in CategoriesArray already
+		        	var isValueValid = this.checkWhetherCategoryRepeat(value);
+		        	
+
+		        	if (isValueValid) {
+
+			          	axios.put('/api/v1/menu/category', {
+			          		category_id: category_id,
+			          		category_name: value
+			          	})
+			          	.then((response) => {
+			          		that.$message({
+				            	type: 'success',
+				            	message: response.data.msg
+				          	});
+
+				        	console.log(response);
+				        	
+				        	that.loadCategories();
+			          	})
+			          	.catch((error) => {
+			          		that.$message({
+				            	type: 'error',
+				            	message: error.response.data.errmsg
+				          	});
+				        	
+					    	console.log(error.response);
+					  	});
+		        	}
+
+		        })
+		        .catch(() => {});
+
 			},
 
 	      	createType() {
@@ -84,17 +126,8 @@
 		        })
 		        .then(({ value }) => {
 		        	// check whether 'value' is in CategoriesArray already
-		        	var isValueValid = true;
-		        	for (var item of that.CategoriesArray) {
-		        		if (item.category_name == value) {
-		        			that.$message({
-				            	type: 'error',
-				            	message: '该品类已创建'
-				          	});
-				          	isValueValid = false;
-				          	break;
-		        		}
-		        	}
+		        	var isValueValid = this.checkWhetherCategoryRepeat(value);
+		        	
 
 		        	if (isValueValid) {
 
@@ -123,10 +156,50 @@
 
 		        })
 		        .catch(() => {});
+	      	},
+
+	      	deleteType(category_id) {
+	      		var that = this;
+
+	      		this.$confirm('是否删除该品类?', '提示', {
+          			confirmButtonText: '确定',
+          			cancelButtonText: '取消',
+          			type: 'warning'
+        		}).then(() => {
+        			axios.delete('/api/v1/menu/category', {
+			          	data: {category_id: category_id}
+			        })
+			        .then((response) => {
+		          		that.$message({
+			            	type: 'success',
+			            	message: response.data.msg
+			          	});
+
+			        	console.log(response);
+			        	
+			        	that.loadCategories();
+			        })	
+		          	.catch((error) => {
+		          		that.$message({
+			            	type: 'error',
+			            	message: error.response.data.errmsg
+			          	});
+			        	
+				    	console.log(error.response);
+				  	});
+
+        		}).catch(() => {
+          			this.$message({
+            			type: 'info',
+            			message: '已取消删除'
+          			});          
+        		});
 	      	}
     	}
 	}
 </script>
+
+
 
 
 
@@ -137,7 +210,7 @@
 		border: 1px solid, #BFBFBF;
 		box-shadow: 0px 0px 5px #888888;
 		background-color: white;
-		height: 100%;
+		/*height: 100%;*/
 	}
 
 	p {
@@ -147,6 +220,12 @@
 		font-weight: normal;
 		margin: 0;
 	}
+
+	#Menubar .el-button {
+      font-size: 15px;
+      width: auto;
+      margin: 0;
+    }
 
 	.grid-content {
     	display:flex;
@@ -178,13 +257,25 @@
 		align-content: space-around;
 	}
 
-	.bottom {
+	.typeBottom {
 		font-size: 13px;
     	color: #999;
+	}
+
+	.typeBottom .el-button {
+		color: #111;
+		margin: 0;
+		padding: 0;
+	}
+
+	.typeBottom .el-button i {
+		margin: 2px;
 	}
 
 	div.el-card.is-hover-shadow {
 		margin: 6px;
 	}
 
+
 </style>
+

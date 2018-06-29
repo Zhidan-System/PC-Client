@@ -40,4 +40,26 @@ export default {
 }
 </script>
 <style scoped>
+.el-button {
+  font-size: 12pt;
+  margin: 10px;
+  width: 99%;
+}
+
+.el-input-number .el-input {
+  margin: 0;
+}
+
+.el-input {
+  margin: 8px;
+  text-align: bottom;
+}
+
+
+.el-header {
+  padding: 10px;
+  text-align: center;
+  font-size: 25pt;
+  font-weight: 2em;
+}
 </style>
