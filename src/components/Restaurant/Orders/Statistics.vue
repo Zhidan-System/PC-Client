@@ -172,7 +172,7 @@ export default {
             for (var it = 1; it <= DaysInThisMonth; it++) {
                 var DateToGet = new Date();
                 DateToGet.setDate(it);
-                console.log(DateToGet.toLocaleDateString());
+                //console.log(DateToGet.toLocaleDateString());
                 var RevenueThisDate;
                 if (this.ChartTypeSelector == 0) {
 
@@ -231,7 +231,7 @@ export default {
             for (var it = MinIterator; it < MaxIterator; it++) {
                 var DateToGet = new Date();
                 DateToGet.setDate(CurrentDate.getDate()+it);
-                console.log(DateToGet.toLocaleDateString());
+                //console.log(DateToGet.toLocaleDateString());
                 var RevenueThisDate;
                 if (this.ChartTypeSelector == 0) {
 
@@ -294,7 +294,7 @@ export default {
             for (var it = 0; it < 24; it++) {
                 var DateToGet = new Date();
                 DateToGet.setHours(it);
-                console.log(DateToGet.toLocaleDateString());
+                //console.log(DateToGet.toLocaleDateString());
                 var RevenueThisDate;
                 if (this.ChartTypeSelector == 0) {
 
@@ -304,8 +304,8 @@ export default {
                             }
                         })  
                         .then(response => {
-                        console.log(response.data.data[0]["sum(total_price)"]);
-                        RevenueThisDate = response.data.data[0]["sum(total_price)"];
+                        console.log(response.data);
+                        RevenueThisDate = response.data;
                     });
                     RevenueThisDate = (RevenueThisDate == null) ? 100 : RevenueThisDate; 
                     Daily_Array.push(RevenueThisDate);
