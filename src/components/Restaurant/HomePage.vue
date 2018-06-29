@@ -1,8 +1,8 @@
-<template>
+  <template>
   <div id="homepage">
     <el-container>
         <el-aside width="200px" height="550px">
-          <el-menu class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"  background-color="#303133" :collapse=false>
+          <el-menu class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"  background-color="#303133">
             <el-submenu index="1">
               <template slot="title">
                 <span class="menu-title">菜单管理</span>

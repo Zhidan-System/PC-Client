@@ -113,7 +113,7 @@ export default {
     },
 
     mounted () {
-        axios.get('http://zhidan.site/api/v1/order').then(response => {this.CategoriesArray = response.data.data});
+        axios.get('/api/v1/menu').then(response => {this.CategoriesArray = response.data.data});
     },
 
     methods: {
