@@ -1,12 +1,17 @@
 <template>
 	<div id="Orders">
 
-		<div v-if = "OrdersArray.length == 0" id="NoOrderPage">
+		<el-row>
+			<el-button @click = "ChangeOrdersToShow(0)">显示未完成订单</el-button>
+			<el-button @click = "ChangeOrdersToShow(1)">显示已完成订单</el-button>
+		</el-row>
+
+		<div v-if = "OrdersToShow.length == 0" id="NoOrderPage">
 			<el-row id="hint">目前没有订单...</el-row>
 		</div>
 
 		<div v-else>
-			<ul v-for = "(order, index) in OrdersArray" :key="index">
+			<ul v-for = "(order, index) in OrdersToShow" :key="index">
 				<div class="Order">
 					<el-row class = "OrderNum">
 			  			<el-col :span="24">
@@ -110,7 +115,13 @@ export default {
 
 			],
 
-			TestArray:[]
+			FufuiledOrders:[],
+
+			InfufuiledOrders:[],
+
+			OrdersToShow:[],
+
+			StateOfOrderToShow: 0, // 0 —— 显示未完成订单； 1 —— 显示已完成订单
 		}
 
 
@@ -125,25 +136,49 @@ export default {
     }, 
 
     methods: {
+    	ChangeStateOfOrderToShow(val) {
+    		this.StateOfOrderToShow = val;
+    	},
+
+    	ChangeOrdersToShow(val) {
+    		this.ChangeStateOfOrderToShow(val);
+    		if (val == 0) {
+    			this.OrdersToShow = this.InfufuiledOrders;
+    		} else {
+    			this.OrdersToShow = this.FufuiledOrders;
+    		}
+    	},
+
     	GetOrders() {
     		var CurrentDate = new Date(); // 当前日期 YYYY-MM-DD
     		axios.get('/api/v1/order', {
         		params: {
-        			//date: CurrentDate
-        			date: "2018-06-27"
+        			date: CurrentDate
+        			//date: "2018-06-27"
         		}
         	})	
         	.then(response => {
-        	console.log(response.data.data);
-        	this.OrdersArray = response.data.data;
+        		this.OrdersArray = response.data.data;
+        		console.log(this.OrdersArray);
+        		this.FufuiledOrders = [];
+        		this.InfufuiledOrders = [];
+        		for (var i = 0; i < this.OrdersArray.length; i++) {
+        			if (this.OrdersArray[i].OrderStatus == "已完成") {
+        				this.FufuiledOrders.push(this.OrdersArray[i]);
+        			} else {
+        				this.InfufuiledOrders.push(this.OrdersArray[i]);
+        			}
+        		}
         	});
     	},
 
     	FufuilOrder(IndexOfOrder) {
     		var OrderToFufuil = [];
     		var that = this;
-    		OrderToFufuil.push(this.OrdersArray[IndexOfOrder].order_id);
-    		this.OrdersArray.splice(IndexOfOrder, 1);
+    		OrderToFufuil.push(this.InfufuiledOrders[IndexOfOrder].order_id);
+    		this.FufuiledOrders.push(this.InfufuiledOrders[IndexOfOrder]);
+    		this.InfufuiledOrders.splice(IndexOfOrder, 1);
+    		
 
     		axios.put('api/v1/order', {
     			order_list: OrderToFufuil
