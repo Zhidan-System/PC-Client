@@ -57,7 +57,7 @@
 
 			  			<el-col :span="3" class = "Font_LeftAlign">
 			  				<div class="grid-content bg-purple-dark Font_Bold">
-			  					
+			  					<el-button @click = "FufuilOrder(index)">完成订单</el-button>
 			  				</div>
 			  			</el-col>
 
@@ -129,14 +129,41 @@ export default {
     		var CurrentDate = new Date(); // 当前日期 YYYY-MM-DD
     		axios.get('/api/v1/order', {
         		params: {
-        			date: CurrentDate
+        			//date: CurrentDate
+        			date: "2018-06-27"
         		}
         	})	
         	.then(response => {
         	console.log(response.data.data);
         	this.OrdersArray = response.data.data;
         	});
-    	}
+    	},
+
+    	FufuilOrder(IndexOfOrder) {
+    		var OrderToFufuil = [];
+    		var that = this;
+    		OrderToFufuil.push(this.OrdersArray[IndexOfOrder].order_id);
+    		this.OrdersArray.splice(IndexOfOrder, 1);
+
+    		axios.put('api/v1/order', {
+    			order_list: OrderToFufuil
+    		}).then((response) => {
+		        that.$message({
+			        type: 'success',
+			        message: response.data.msg
+			    });
+
+			    console.log(response);
+			}).catch((error) => {
+		    that.$message({
+			    type: 'error',
+			    message: error.response.data.errmsg
+			});
+			        	
+			console.log(error.response);
+			});
+
+    	},
     }
 }
 
