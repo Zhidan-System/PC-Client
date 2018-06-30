@@ -20,13 +20,20 @@
 						<el-row class = "OrderNum">
 				  			<el-col :span="24">
 				  				<div class="grid-content bg-purple-dark Font_LeftAlign">
-				  					<i class="el-icon-tickets Font_Bold "> 单号： {{order.order_id}} </i>
+				  					<p class=" Font_Bold "> 单号： {{order.order_id}} </p>
 				  				</div>
 				  				<div class="grid-content bg-purple-dark Font_LeftAlign">
-				  					<i class="el-icon-tickets Font_Bold "> 桌号： {{order.desk_id}} </i>
+				  					<p class=" Font_Bold "> 桌号： {{order.desk_id}} </p>
 				  				</div>
 				  			</el-col>
 
+						</el-row>
+
+						<el-row id = "dishes">
+							菜品清单:
+							<ul v-for = "(dish, index1) in order.dish_list" :key="index1">
+								<el-row>{{index1+1}} . {{dish.dish_name}}</el-row>
+							</ul>
 						</el-row>
 
 						<el-row id="SecondRow">
@@ -81,12 +88,7 @@
 				  			</el-col>
 						</el-row>
 
-						<el-row id = "dishes">
-							<p>菜品清单：</p>
-							<ul v-for = "(dish, index1) in order.dish_list" :key="index1">
-								<el-row>{{index1+1}} . {{dish.dish_name}}</el-row>
-							</ul>
-						</el-row>
+						
 
 
 						<el-row class = "GappingLine"></el-row>
@@ -180,6 +182,8 @@ export default {
         		this.FufuiledOrders = [];
         		this.InfufuiledOrders = [];
         		for (var i = 0; i < this.OrdersArray.length; i++) {
+        			this.OrdersArray[i].date = new Date(this.OrdersArray[i].date).toLocaleString();
+        			console.log(this.OrdersArray[i].date );
         			if (this.OrdersArray[i].state == "已完成") {
         				this.FufuiledOrders.push(this.OrdersArray[i]);
         			} else {
@@ -225,6 +229,7 @@ export default {
 #dishes {
 	margin-bottom: 1%;
 	left: -43.5%;
+	font-size: 30px;
 }
 
 #ShowDishesButton {
@@ -278,12 +283,12 @@ export default {
 }
 
 #SecondRow {
-	margin-left: 83px;
+	margin-left: 50px;
 	margin-bottom: 10px;
 }
 
 #ThirdRow {
-	margin-left: 83px;
+	margin-left: 50px;
 	margin-bottom: 30px;	
 }
 
