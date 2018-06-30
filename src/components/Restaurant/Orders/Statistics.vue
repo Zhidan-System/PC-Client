@@ -199,7 +199,7 @@ export default {
                             }
                         })  
                         .then(response => {
-                        console.log(response.data.data[0]["sum(total_price)"]);
+                        //console.log(response.data.data[0]["sum(total_price)"]);
                         RevenueThisDate = response.data.data[0]["sum(total_price)"];
                     });
                     RevenueThisDate = (RevenueThisDate == null) ? this.defaultVal : RevenueThisDate; 

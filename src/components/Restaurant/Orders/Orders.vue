@@ -1,81 +1,94 @@
 <template>
 	<div id="Orders">
-
-		<el-row>
+		<el-row id = "ShowButton">
 			<el-button @click = "ChangeOrdersToShow(0)">显示未完成订单</el-button>
 			<el-button @click = "ChangeOrdersToShow(1)">显示已完成订单</el-button>
 		</el-row>
 
-		<div v-if = "OrdersToShow.length == 0" id="NoOrderPage">
-			<el-row id="hint">目前没有订单...</el-row>
+		<div v-if = "StateOfOrderToShow == -1">
+			<el-row id="hint">请选择要显示的订单...</el-row>
 		</div>
 
 		<div v-else>
-			<ul v-for = "(order, index) in OrdersToShow" :key="index">
-				<div class="Order">
-					<el-row class = "OrderNum">
-			  			<el-col :span="24">
-			  				<div class="grid-content bg-purple-dark Font_LeftAlign">
-			  					<i class="el-icon-tickets Font_Bold "> 单号： {{order.order_id}} </i>
-			  				</div>
-			  			</el-col>
-					</el-row>
+			<div v-if = "OrdersToShow.length == 0" id="NoOrderPage">
+				<el-row id="hint">目前没有订单...</el-row>
+			</div>
 
-					<el-row id="SecondRow">
-			  			<el-col :span="6" class = "Font_LeftAlign">
-			  				<div class="grid-content bg-purple-dark">
-			  					订单状态: {{order.state}}
-			  				</div>
-			  			</el-col>
+			<div v-else>
+				<ul v-for = "(order, index) in OrdersToShow" :key="index">
+					<div class="Order">
+						<el-row class = "OrderNum">
+				  			<el-col :span="24">
+				  				<div class="grid-content bg-purple-dark Font_LeftAlign">
+				  					<i class="el-icon-tickets Font_Bold "> 单号： {{order.order_id}} </i>
+				  				</div>
+				  			</el-col>
+						</el-row>
 
-			  			<el-col :span="12" class = "Font_LeftAlign">
-			  				<div class="grid-content bg-purple-dark">
-			  					订单金额： {{order.total_price}}
-			  				</div>
-			  			</el-col>
+						<el-row id="SecondRow">
+				  			<el-col :span="6" class = "Font_LeftAlign">
+				  				<div class="grid-content bg-purple-dark">
+				  					订单状态: {{order.state}}
+				  				</div>
+				  			</el-col>
 
-			  			<el-col :span="3" class = "Font_LeftAlign">
-			  				<div class="grid-content bg-purple-dark">
-			  					
-			  				</div>
-			  			</el-col>
+				  			<el-col :span="12" class = "Font_LeftAlign">
+				  				<div class="grid-content bg-purple-dark">
+				  					订单金额： {{order.total_price}}
+				  				</div>
+				  			</el-col>
 
-			  			<el-col :span="3" class = "Font_LeftAlign">
-			  				<div class="grid-content bg-purple-dark">
-			  					
-			  				</div>
-			  			</el-col>
-					</el-row>
+				  			<el-col :span="3" class = "Font_LeftAlign">
+				  				<div class="grid-content bg-purple-dark">
+				  					
+				  				</div>
+				  			</el-col>
 
-					<el-row id="ThirdRow">
-			  			<el-col :span="6" class = "Font_LeftAlign">
-			  				<div class="grid-content bg-purple-dark">
-			  					创建时间： {{order.date}}
-			  				</div>
-			  			</el-col>
+				  			<el-col :span="3" class = "Font_LeftAlign">
+				  				<div class="grid-content bg-purple-dark">
+				  					
+				  				</div>
+				  			</el-col>
+						</el-row>
 
-			  			<el-col :span="12" class = "Font_LeftAlign">
-			  				<div class="grid-content bg-purple-dark">
-			  					是否需要餐具： {{order.tableware}}
-			  				</div>
-			  			</el-col>
+						<el-row id="ThirdRow">
+				  			<el-col :span="6" class = "Font_LeftAlign">
+				  				<div class="grid-content bg-purple-dark">
+				  					创建时间： {{order.date}}
+				  				</div>
+				  			</el-col>
 
-			  			<el-col :span="3" class = "Font_LeftAlign">
-			  				<div class="grid-content bg-purple-dark Font_Bold">
-			  					<el-button @click = "FufuilOrder(index)">完成订单</el-button>
-			  				</div>
-			  			</el-col>
+				  			<el-col :span="12" class = "Font_LeftAlign">
+				  				<div class="grid-content bg-purple-dark">
+				  					是否需要餐具： {{order.tableware}}
+				  				</div>
+				  			</el-col>
 
-			  			<el-col :span="3" class = "Font_LeftAlign">
-			  				<div class="grid-content bg-purple-dark Font_Bold">
-			  					
-			  				</div>
-			  			</el-col>
-					</el-row>
+				  			<el-col :span="3" class = "Font_LeftAlign">
+				  				<div v-if="StateOfOrderToShow == 0" class="grid-content bg-purple-dark Font_Bold">
+				  					<el-button @click = "FufuilOrder(index)">完成订单</el-button>
+				  				</div>
+				  			</el-col>
 
-					<el-row class = "GappingLine"></el-row>
-				</div>
-			</ul>
+				  			<el-col :span="3" class = "Font_LeftAlign">
+				  				<div class="grid-content bg-purple-dark Font_Bold">
+				  					
+				  				</div>
+				  			</el-col>
+						</el-row>
+
+						<el-row id = "dishes">
+							<p>菜品清单：</p>
+							<ul v-for = "(dish, index1) in order.dish_list" :key="index1">
+								<el-row>{{index1+1}} . {{dish.dish_name}}</el-row>
+							</ul>
+						</el-row>
+
+
+						<el-row class = "GappingLine"></el-row>
+					</div>
+				</ul>
+			</div>
 		</div>
 
 
@@ -121,7 +134,7 @@ export default {
 
 			OrdersToShow:[],
 
-			StateOfOrderToShow: 0, // 0 —— 显示未完成订单； 1 —— 显示已完成订单
+			StateOfOrderToShow: -1, // 0 —— 显示未完成订单； 1 —— 显示已完成订单
 		}
 
 
@@ -129,7 +142,7 @@ export default {
 
 	mounted () {
         this.GetOrders();
-
+        //this.ChangeOrdersToShow(0);
         setInterval(function() {
         	this.GetOrders();
         }.bind(this), 30000);
@@ -159,11 +172,11 @@ export default {
         	})	
         	.then(response => {
         		this.OrdersArray = response.data.data;
-        		console.log(this.OrdersArray);
+        		console.log("123123"+this.OrdersArray.dish_list);
         		this.FufuiledOrders = [];
         		this.InfufuiledOrders = [];
         		for (var i = 0; i < this.OrdersArray.length; i++) {
-        			if (this.OrdersArray[i].OrderStatus == "已完成") {
+        			if (this.OrdersArray[i].state == "已完成") {
         				this.FufuiledOrders.push(this.OrdersArray[i]);
         			} else {
         				this.InfufuiledOrders.push(this.OrdersArray[i]);
@@ -205,6 +218,21 @@ export default {
 </script>
 
 <style type="text/css">
+#dishes {
+	margin-bottom: 1%;
+	left: -43.5%;
+}
+
+#ShowDishesButton {
+	margin-bottom: 1%;
+	left: -36%;
+}
+
+#ShowButton {
+	margin-top: 1%;
+	left: -36%;
+}
+
 #hint {
 	font-weight: bold;
 	font-size: 40px;
