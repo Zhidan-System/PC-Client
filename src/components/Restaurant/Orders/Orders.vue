@@ -22,7 +22,11 @@
 				  				<div class="grid-content bg-purple-dark Font_LeftAlign">
 				  					<i class="el-icon-tickets Font_Bold "> 单号： {{order.order_id}} </i>
 				  				</div>
+				  				<div class="grid-content bg-purple-dark Font_LeftAlign">
+				  					<i class="el-icon-tickets Font_Bold "> 桌号： {{order.desk_id}} </i>
+				  				</div>
 				  			</el-col>
+
 						</el-row>
 
 						<el-row id="SecondRow">
